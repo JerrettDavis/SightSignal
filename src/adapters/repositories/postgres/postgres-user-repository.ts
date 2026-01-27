@@ -40,7 +40,7 @@ export const buildPostgresUserRepository = (sql: Sql): UserRepository => {
 
     async list(filters?: UserListFilters): Promise<User[]> {
       const conditions: string[] = [];
-      const params: unknown[] = [];
+      const params: string[] = [];
 
       if (filters?.role) {
         conditions.push(`role = $${params.length + 1}`);
@@ -105,7 +105,7 @@ export const buildPostgresUserRepository = (sql: Sql): UserRepository => {
 
     async count(filters?: UserListFilters): Promise<number> {
       const conditions: string[] = [];
-      const params: unknown[] = [];
+      const params: string[] = [];
 
       if (filters?.role) {
         conditions.push(`role = $${params.length + 1}`);
