@@ -13,7 +13,7 @@ import {
   jsonUnauthorized,
 } from "@/shared/http";
 import type { SignalId } from "@/domain/signals/signal";
-import type { Sighting } from "@/domain/sightings/sighting";
+import type { Sighting, SightingId } from "@/domain/sightings/sighting";
 import { z } from "zod";
 
 export const runtime = "nodejs";
@@ -87,7 +87,7 @@ export const POST = async (request: Request, context: RouteContext) => {
   // If sightingId provided, evaluate that specific sighting
   if (parsed.data.sightingId) {
     const sighting = await sightingRepository.getById(
-      parsed.data.sightingId as string
+      parsed.data.sightingId as SightingId
     );
     if (!sighting) {
       return jsonNotFound("Sighting not found.");
