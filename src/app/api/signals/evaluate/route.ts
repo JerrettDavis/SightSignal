@@ -7,7 +7,7 @@ import {
 } from "@/domain/signals/signal";
 import { getReputationTier } from "@/domain/reputation/reputation";
 import { jsonBadRequest, jsonOk } from "@/shared/http";
-import type { Sighting } from "@/domain/sightings/sighting";
+import type { Sighting, SightingId } from "@/domain/sightings/sighting";
 import type { SignalId } from "@/domain/signals/signal";
 import { z } from "zod";
 
@@ -67,7 +67,7 @@ export const POST = async (request: Request) => {
   const { sightingId, triggerType } = parsed.data;
 
   // Get the sighting
-  const sighting = await sightingRepository.getById(sightingId as string);
+  const sighting = await sightingRepository.getById(sightingId as SightingId);
   if (!sighting) {
     return jsonBadRequest({ message: "Sighting not found." });
   }
