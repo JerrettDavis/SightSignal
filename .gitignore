@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/test-results
+/playwright-report
 
 # next.js
 /.next/
@@ -30,8 +32,20 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# local data directory
+.local/
+
+# database files
+*.db
+*.sqlite
+*.sqlite3
+
+# env files (IMPORTANT: .env.example should be tracked!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -39,3 +53,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temporary Claude Code directories
+tmpclaude-*
+
+# MCP and Serena plugin directories
+.playwright-mcp/
+.serena/
