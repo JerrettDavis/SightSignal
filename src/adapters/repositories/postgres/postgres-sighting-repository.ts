@@ -1,37 +1,50 @@
 import type { Polygon } from "@/domain/geo/geo";
 import type { Sighting, SightingId } from "@/domain/sightings/sighting";
-import type { SightingFilters, SightingRepository } from "@/ports/sighting-repository";
+import type {
+  SightingFilters,
+  SightingRepository,
+} from "@/ports/sighting-repository";
 import { pointInPolygon } from "@/shared/geo";
 import { getSql } from "@/adapters/repositories/postgres/client";
 
-const mapRow = (row: Record<string, unknown>): Sighting => ({
-  id: row.id as SightingId,
-  typeId: row.type_id as Sighting["typeId"],
-  categoryId: row.category_id as Sighting["categoryId"],
-  location: { lat: Number(row.location_lat), lng: Number(row.location_lng) },
-  description: String(row.description ?? ""),
-  details: row.details ? String(row.details) : undefined,
-  importance: row.importance as Sighting["importance"],
-  status: row.status as Sighting["status"],
-  observedAt: new Date(row.observed_at as string).toISOString(),
-  createdAt: new Date(row.created_at as string).toISOString(),
-  fields: (row.fields as Record<string, Sighting["fields"][string]>) ?? {},
-  reporterId: row.reporter_id ? String(row.reporter_id) : undefined,
-  // Ensure backward compatibility by providing default values for scoring fields
-  upvotes: row.upvotes != null ? Number(row.upvotes) : 0,
-  downvotes: row.downvotes != null ? Number(row.downvotes) : 0,
-  confirmations: row.confirmations != null ? Number(row.confirmations) : 0,
-  disputes: row.disputes != null ? Number(row.disputes) : 0,
-  spamReports: row.spam_reports != null ? Number(row.spam_reports) : 0,
-  score: row.score != null ? Number(row.score) : 0,
-  hotScore: row.hot_score != null ? Number(row.hot_score) : 0,
-});
+const mapRow = (row: Record<string, unknown>): Sighting => {
+  // Handle JSONB location field
+  const location = row.location as { lat: number; lng: number } | null;
+
+  return {
+    id: row.id as SightingId,
+    typeId: row.type_id as Sighting["typeId"],
+    categoryId: row.category_id as Sighting["categoryId"],
+    location: {
+      lat: location?.lat ?? 0,
+      lng: location?.lng ?? 0,
+    },
+    description: String(row.description ?? ""),
+    details: row.details ? String(row.details) : undefined,
+    importance: row.importance as Sighting["importance"],
+    status: row.status as Sighting["status"],
+    observedAt: new Date(row.observed_at as string).toISOString(),
+    createdAt: new Date(row.created_at as string).toISOString(),
+    fields: (row.fields as Record<string, Sighting["fields"][string]>) ?? {},
+    reporterId: row.reporter_id ? String(row.reporter_id) : undefined,
+    // Ensure backward compatibility by providing default values for scoring fields
+    upvotes: row.upvotes != null ? Number(row.upvotes) : 0,
+    downvotes: row.downvotes != null ? Number(row.downvotes) : 0,
+    confirmations: row.confirmations != null ? Number(row.confirmations) : 0,
+    disputes: row.disputes != null ? Number(row.disputes) : 0,
+    spamReports: row.spam_reports != null ? Number(row.spam_reports) : 0,
+    score: row.score != null ? Number(row.score) : 0,
+    hotScore: row.hot_score != null ? Number(row.hot_score) : 0,
+  };
+};
 
 const applyBounds = (sightings: Sighting[], bounds?: Polygon) => {
   if (!bounds) {
     return sightings;
   }
-  return sightings.filter((sighting) => pointInPolygon(bounds, sighting.location));
+  return sightings.filter((sighting) =>
+    pointInPolygon(bounds, sighting.location)
+  );
 };
 
 export const postgresSightingRepository = (): SightingRepository => {
@@ -39,13 +52,21 @@ export const postgresSightingRepository = (): SightingRepository => {
 
   return {
     async create(sighting) {
+      // Ensure all scoring fields are initialized
+      const upvotes = sighting.upvotes ?? 0;
+      const downvotes = sighting.downvotes ?? 0;
+      const confirmations = sighting.confirmations ?? 0;
+      const disputes = sighting.disputes ?? 0;
+      const spamReports = sighting.spamReports ?? 0;
+      const score = sighting.score ?? 0;
+      const hotScore = sighting.hotScore ?? 0;
+
       await sql`
         insert into sightings (
           id,
           type_id,
           category_id,
-          location_lat,
-          location_lng,
+          location,
           description,
           details,
           importance,
@@ -53,14 +74,20 @@ export const postgresSightingRepository = (): SightingRepository => {
           observed_at,
           created_at,
           fields,
-          reporter_id
+          reporter_id,
+          upvotes,
+          downvotes,
+          confirmations,
+          disputes,
+          spam_reports,
+          score,
+          hot_score
         )
         values (
           ${sighting.id},
           ${sighting.typeId},
           ${sighting.categoryId},
-          ${sighting.location.lat},
-          ${sighting.location.lng},
+          ${sql.json(sighting.location)},
           ${sighting.description},
           ${sighting.details ?? null},
           ${sighting.importance},
@@ -68,7 +95,14 @@ export const postgresSightingRepository = (): SightingRepository => {
           ${sighting.observedAt},
           ${sighting.createdAt},
           ${sql.json(sighting.fields)},
-          ${sighting.reporterId ?? null}
+          ${sighting.reporterId ?? null},
+          ${upvotes},
+          ${downvotes},
+          ${confirmations},
+          ${disputes},
+          ${spamReports},
+          ${score},
+          ${hotScore}
         )
       `;
     },
@@ -80,15 +114,27 @@ export const postgresSightingRepository = (): SightingRepository => {
       return mapRow(rows[0]);
     },
     async list(filters: SightingFilters) {
-      const rows = await sql`select * from sightings`;
+      // Query with ordering by hot_score (descending), then created_at (descending)
+      const rows = await sql`
+        select * from sightings
+        order by hot_score desc, created_at desc
+      `;
       const mapped = rows.map(mapRow).filter((sighting) => {
         if (filters.status && sighting.status !== filters.status) {
           return false;
         }
-        if (filters.typeIds && filters.typeIds.length && !filters.typeIds.includes(sighting.typeId)) {
+        if (
+          filters.typeIds &&
+          filters.typeIds.length &&
+          !filters.typeIds.includes(sighting.typeId)
+        ) {
           return false;
         }
-        if (filters.categoryIds && filters.categoryIds.length && !filters.categoryIds.includes(sighting.categoryId)) {
+        if (
+          filters.categoryIds &&
+          filters.categoryIds.length &&
+          !filters.categoryIds.includes(sighting.categoryId)
+        ) {
           return false;
         }
         return true;
@@ -96,19 +142,34 @@ export const postgresSightingRepository = (): SightingRepository => {
       return applyBounds(mapped, filters.bounds);
     },
     async update(sighting) {
+      // Preserve scoring fields during update, using provided values or defaults
+      const upvotes = sighting.upvotes ?? 0;
+      const downvotes = sighting.downvotes ?? 0;
+      const confirmations = sighting.confirmations ?? 0;
+      const disputes = sighting.disputes ?? 0;
+      const spamReports = sighting.spamReports ?? 0;
+      const score = sighting.score ?? 0;
+      const hotScore = sighting.hotScore ?? 0;
+
       await sql`
         update sightings set
           type_id = ${sighting.typeId},
           category_id = ${sighting.categoryId},
-          location_lat = ${sighting.location.lat},
-          location_lng = ${sighting.location.lng},
+          location = ${sql.json(sighting.location)},
           description = ${sighting.description},
           details = ${sighting.details ?? null},
           importance = ${sighting.importance},
           status = ${sighting.status},
           observed_at = ${sighting.observedAt},
           fields = ${sql.json(sighting.fields)},
-          reporter_id = ${sighting.reporterId ?? null}
+          reporter_id = ${sighting.reporterId ?? null},
+          upvotes = ${upvotes},
+          downvotes = ${downvotes},
+          confirmations = ${confirmations},
+          disputes = ${disputes},
+          spam_reports = ${spamReports},
+          score = ${score},
+          hot_score = ${hotScore}
         where id = ${sighting.id}
       `;
     },

@@ -16,7 +16,9 @@ type Dependencies = {
   repository: GeofenceRepository;
 };
 
-export const buildUpdateGeofence = ({ repository }: Dependencies): UpdateGeofence => {
+export const buildUpdateGeofence = ({
+  repository,
+}: Dependencies): UpdateGeofence => {
   return async (id, updates) => {
     const existing = await repository.getById(id as GeofenceId);
 

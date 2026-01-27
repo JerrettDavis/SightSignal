@@ -9,6 +9,7 @@
 ## Overview
 
 Phase 1 establishes the foundation for the signals system by implementing:
+
 1. User reputation tracking and scoring
 2. Expanded 3-level taxonomy (categories → subcategories → types + tags)
 3. Sighting reactions (upvote, downvote, confirmed, disputed, spam)
@@ -22,11 +23,13 @@ Phase 1 establishes the foundation for the signals system by implementing:
 ### Step 1: Database Schema - Reputation System
 
 **Files to create/modify:**
+
 - `db/migrations/001_add_reputation_tables.sql`
 
 **Tasks:**
 
 1.1. Create user reputation table
+
 ```sql
 CREATE TABLE user_reputation (
   user_id VARCHAR PRIMARY KEY,
@@ -37,6 +40,7 @@ CREATE TABLE user_reputation (
 ```
 
 1.2. Create reputation events audit log
+
 ```sql
 CREATE TABLE reputation_events (
   id VARCHAR PRIMARY KEY,
@@ -52,6 +56,7 @@ CREATE INDEX idx_reputation_events_created ON reputation_events(created_at DESC)
 ```
 
 1.3. Run migration
+
 ```bash
 # Apply to PostgreSQL (if using)
 # Or create migration script for other DBs
@@ -62,11 +67,13 @@ CREATE INDEX idx_reputation_events_created ON reputation_events(created_at DESC)
 ### Step 2: Database Schema - Taxonomy Expansion
 
 **Files to create/modify:**
+
 - `db/migrations/002_expand_taxonomy.sql`
 
 **Tasks:**
 
 2.1. Create subcategories table
+
 ```sql
 CREATE TABLE subcategories (
   id VARCHAR PRIMARY KEY,
@@ -80,6 +87,7 @@ CREATE INDEX idx_subcategories_category ON subcategories(category_id);
 ```
 
 2.2. Update categories table
+
 ```sql
 ALTER TABLE categories
   ADD COLUMN icon VARCHAR(50),
@@ -87,6 +95,7 @@ ALTER TABLE categories
 ```
 
 2.3. Update sighting_types table
+
 ```sql
 ALTER TABLE sighting_types
   ADD COLUMN subcategory_id VARCHAR REFERENCES subcategories(id),
@@ -99,11 +108,13 @@ ALTER TABLE sighting_types
 ### Step 3: Database Schema - Sighting Reactions
 
 **Files to create/modify:**
+
 - `db/migrations/003_add_sighting_reactions.sql`
 
 **Tasks:**
 
 3.1. Create sighting reactions table
+
 ```sql
 CREATE TABLE sighting_reactions (
   sighting_id VARCHAR REFERENCES sightings(id) ON DELETE CASCADE,
@@ -119,6 +130,7 @@ CREATE INDEX idx_sighting_reactions_type ON sighting_reactions(type);
 ```
 
 3.2. Add scoring columns to sightings table
+
 ```sql
 ALTER TABLE sightings
   ADD COLUMN upvotes INT DEFAULT 0,
@@ -138,15 +150,19 @@ CREATE INDEX idx_sightings_score ON sightings(score DESC);
 ### Step 4: Domain Layer - Reputation
 
 **Files to create:**
+
 - `src/domain/reputation/reputation.ts`
 - `src/domain/reputation/reputation-events.ts`
 
 **Tasks:**
 
 4.1. Create reputation types
+
 ```typescript
 export type UserId = string & { readonly __brand: "UserId" };
-export type ReputationEventId = string & { readonly __brand: "ReputationEventId" };
+export type ReputationEventId = string & {
+  readonly __brand: "ReputationEventId";
+};
 
 export type ReputationReason =
   | "sighting_created"
@@ -176,6 +192,7 @@ export type ReputationEvent = {
 ```
 
 4.2. Create reputation scoring constants
+
 ```typescript
 export const REPUTATION_AMOUNTS: Record<ReputationReason, number> = {
   sighting_created: 1,
@@ -190,6 +207,7 @@ export const REPUTATION_AMOUNTS: Record<ReputationReason, number> = {
 ```
 
 4.3. Create reputation tier calculation
+
 ```typescript
 export type ReputationTier = "unverified" | "new" | "trusted" | "verified";
 
@@ -209,12 +227,14 @@ export const getReputationTier = (
 ### Step 5: Domain Layer - Taxonomy Expansion
 
 **Files to create/modify:**
+
 - `src/domain/taxonomy/taxonomy.ts` (new)
 - `src/data/taxonomy.ts` (modify - will expand later)
 
 **Tasks:**
 
 5.1. Create taxonomy domain types
+
 ```typescript
 export type CategoryId = string & { readonly __brand: "CategoryId" };
 export type SubcategoryId = string & { readonly __brand: "SubcategoryId" };
@@ -245,8 +265,11 @@ export type SightingType = {
 ```
 
 5.2. Create taxonomy validation
+
 ```typescript
-export const validateCategoryId = (id: string): Result<CategoryId, DomainError> => {
+export const validateCategoryId = (
+  id: string
+): Result<CategoryId, DomainError> => {
   if (!id || id.trim().length === 0) {
     return err({
       code: "taxonomy.invalid_category_id",
@@ -264,13 +287,17 @@ export const validateCategoryId = (id: string): Result<CategoryId, DomainError> 
 ### Step 6: Domain Layer - Sighting Reactions
 
 **Files to create:**
+
 - `src/domain/sightings/sighting-reaction.ts`
 
 **Tasks:**
 
 6.1. Create reaction types
+
 ```typescript
-export type SightingReactionId = string & { readonly __brand: "SightingReactionId" };
+export type SightingReactionId = string & {
+  readonly __brand: "SightingReactionId";
+};
 
 export type SightingReactionType =
   | "upvote"
@@ -296,6 +323,7 @@ export type SightingReactionCounts = {
 ```
 
 6.2. Create scoring functions
+
 ```typescript
 export const calculateBaseScore = (counts: SightingReactionCounts): number => {
   return (
@@ -307,12 +335,16 @@ export const calculateBaseScore = (counts: SightingReactionCounts): number => {
   );
 };
 
-export const calculateHotScore = (baseScore: number, ageInHours: number): number => {
+export const calculateHotScore = (
+  baseScore: number,
+  ageInHours: number
+): number => {
   return baseScore / Math.pow(ageInHours + 2, 1.5);
 };
 ```
 
 6.3. Update Sighting type to include scores
+
 ```typescript
 // In src/domain/sightings/sighting.ts
 export type Sighting = {
@@ -332,6 +364,7 @@ export type Sighting = {
 ### Step 7: Ports Layer - Repository Interfaces
 
 **Files to create/modify:**
+
 - `src/ports/reputation-repository.ts` (new)
 - `src/ports/taxonomy-repository.ts` (new)
 - `src/ports/sighting-reaction-repository.ts` (new)
@@ -339,6 +372,7 @@ export type Sighting = {
 **Tasks:**
 
 7.1. Create reputation repository interface
+
 ```typescript
 export type ReputationRepository = {
   getByUserId: (userId: UserId) => Promise<UserReputation | null>;
@@ -350,6 +384,7 @@ export type ReputationRepository = {
 ```
 
 7.2. Create taxonomy repository interface
+
 ```typescript
 export type TaxonomyRepository = {
   // Categories
@@ -374,16 +409,23 @@ export type TaxonomyRepository = {
 ```
 
 7.3. Create sighting reaction repository interface
+
 ```typescript
 export type SightingReactionRepository = {
   add: (reaction: SightingReaction) => Promise<void>;
-  remove: (sightingId: SightingId, userId: UserId, type: SightingReactionType) => Promise<void>;
+  remove: (
+    sightingId: SightingId,
+    userId: UserId,
+    type: SightingReactionType
+  ) => Promise<void>;
   getUserReaction: (
     sightingId: SightingId,
     userId: UserId
   ) => Promise<SightingReaction | null>;
   getCounts: (sightingId: SightingId) => Promise<SightingReactionCounts>;
-  getReactionsForSighting: (sightingId: SightingId) => Promise<SightingReaction[]>;
+  getReactionsForSighting: (
+    sightingId: SightingId
+  ) => Promise<SightingReaction[]>;
 };
 ```
 
@@ -392,6 +434,7 @@ export type SightingReactionRepository = {
 ### Step 8: Application Layer - Use Cases
 
 **Files to create:**
+
 - `src/application/use-cases/reputation/add-reputation-event.ts`
 - `src/application/use-cases/reputation/get-user-reputation.ts`
 - `src/application/use-cases/sightings/add-sighting-reaction.ts`
@@ -402,6 +445,7 @@ export type SightingReactionRepository = {
 **Tasks:**
 
 8.1. Create add reputation event use case
+
 ```typescript
 export type AddReputationEvent = (
   userId: string,
@@ -452,6 +496,7 @@ export const buildAddReputationEvent = ({
 ```
 
 8.2. Create add sighting reaction use case
+
 ```typescript
 export type AddSightingReaction = (
   sightingId: string,
@@ -499,7 +544,8 @@ export const buildAddSightingReaction = ({
     // Recalculate scores
     const counts = await reactionRepository.getCounts(sightingId as SightingId);
     const baseScore = calculateBaseScore(counts);
-    const ageInHours = (Date.now() - Date.parse(sighting.createdAt)) / (1000 * 60 * 60);
+    const ageInHours =
+      (Date.now() - Date.parse(sighting.createdAt)) / (1000 * 60 * 60);
     const hotScore = calculateHotScore(baseScore, ageInHours);
 
     // Update sighting
@@ -543,6 +589,7 @@ export const buildAddSightingReaction = ({
 ```
 
 8.3. Create get taxonomy use case
+
 ```typescript
 export type GetTaxonomy = () => Promise<{
   categories: Category[];
@@ -574,6 +621,7 @@ export const buildGetTaxonomy = ({
 ### Step 9: Adapters Layer - Repository Implementations
 
 **Files to create:**
+
 - `src/adapters/repositories/in-memory-reputation-repository.ts`
 - `src/adapters/repositories/in-memory-taxonomy-repository.ts`
 - `src/adapters/repositories/in-memory-sighting-reaction-repository.ts`
@@ -584,6 +632,7 @@ export const buildGetTaxonomy = ({
 **Tasks:**
 
 9.1. Implement in-memory reputation repository
+
 ```typescript
 export const inMemoryReputationRepository = (): ReputationRepository => {
   const reputations = new Map<UserId, UserReputation>();
@@ -613,52 +662,80 @@ export const inMemoryReputationRepository = (): ReputationRepository => {
 ```
 
 9.2. Implement in-memory sighting reaction repository
+
 ```typescript
-export const inMemorySightingReactionRepository = (): SightingReactionRepository => {
-  const reactions = new Map<string, SightingReaction>();
+export const inMemorySightingReactionRepository =
+  (): SightingReactionRepository => {
+    const reactions = new Map<string, SightingReaction>();
 
-  const makeKey = (sightingId: SightingId, userId: UserId, type: SightingReactionType) =>
-    `${sightingId}:${userId}:${type}`;
+    const makeKey = (
+      sightingId: SightingId,
+      userId: UserId,
+      type: SightingReactionType
+    ) => `${sightingId}:${userId}:${type}`;
 
-  return {
-    async add(reaction) {
-      const key = makeKey(reaction.sightingId, reaction.userId, reaction.type);
-      reactions.set(key, reaction);
-    },
-    async remove(sightingId, userId, type) {
-      const key = makeKey(sightingId, userId, type);
-      reactions.delete(key);
-    },
-    async getUserReaction(sightingId, userId) {
-      for (const reaction of reactions.values()) {
-        if (reaction.sightingId === sightingId && reaction.userId === userId) {
-          return reaction;
-        }
-      }
-      return null;
-    },
-    async getCounts(sightingId) {
-      let upvotes = 0, downvotes = 0, confirmations = 0, disputes = 0, spamReports = 0;
-
-      for (const reaction of reactions.values()) {
-        if (reaction.sightingId === sightingId) {
-          switch (reaction.type) {
-            case "upvote": upvotes++; break;
-            case "downvote": downvotes++; break;
-            case "confirmed": confirmations++; break;
-            case "disputed": disputes++; break;
-            case "spam": spamReports++; break;
+    return {
+      async add(reaction) {
+        const key = makeKey(
+          reaction.sightingId,
+          reaction.userId,
+          reaction.type
+        );
+        reactions.set(key, reaction);
+      },
+      async remove(sightingId, userId, type) {
+        const key = makeKey(sightingId, userId, type);
+        reactions.delete(key);
+      },
+      async getUserReaction(sightingId, userId) {
+        for (const reaction of reactions.values()) {
+          if (
+            reaction.sightingId === sightingId &&
+            reaction.userId === userId
+          ) {
+            return reaction;
           }
         }
-      }
+        return null;
+      },
+      async getCounts(sightingId) {
+        let upvotes = 0,
+          downvotes = 0,
+          confirmations = 0,
+          disputes = 0,
+          spamReports = 0;
 
-      return { upvotes, downvotes, confirmations, disputes, spamReports };
-    },
-    async getReactionsForSighting(sightingId) {
-      return Array.from(reactions.values()).filter(r => r.sightingId === sightingId);
-    },
+        for (const reaction of reactions.values()) {
+          if (reaction.sightingId === sightingId) {
+            switch (reaction.type) {
+              case "upvote":
+                upvotes++;
+                break;
+              case "downvote":
+                downvotes++;
+                break;
+              case "confirmed":
+                confirmations++;
+                break;
+              case "disputed":
+                disputes++;
+                break;
+              case "spam":
+                spamReports++;
+                break;
+            }
+          }
+        }
+
+        return { upvotes, downvotes, confirmations, disputes, spamReports };
+      },
+      async getReactionsForSighting(sightingId) {
+        return Array.from(reactions.values()).filter(
+          (r) => r.sightingId === sightingId
+        );
+      },
+    };
   };
-};
 ```
 
 9.3. Implement PostgreSQL repositories (similar pattern)
@@ -668,11 +745,13 @@ export const inMemorySightingReactionRepository = (): SightingReactionRepository
 ### Step 10: Seed Initial Taxonomy
 
 **Files to create:**
+
 - `src/data/taxonomy-seed.ts`
 
 **Tasks:**
 
 10.1. Create 15 core categories with descriptions and icons
+
 ```typescript
 export const INITIAL_CATEGORIES: Category[] = [
   {
@@ -692,6 +771,7 @@ export const INITIAL_CATEGORIES: Category[] = [
 ```
 
 10.2. Create subcategories for each category (50-80 total)
+
 ```typescript
 export const INITIAL_SUBCATEGORIES: Subcategory[] = [
   {
@@ -709,6 +789,7 @@ export const INITIAL_SUBCATEGORIES: Subcategory[] = [
 ```
 
 10.3. Create sighting types with tags (100-150 total)
+
 ```typescript
 export const INITIAL_TYPES: SightingType[] = [
   {
@@ -724,6 +805,7 @@ export const INITIAL_TYPES: SightingType[] = [
 ```
 
 10.4. Create seed script
+
 ```typescript
 export const seedTaxonomy = async (repository: TaxonomyRepository) => {
   // Seed categories
@@ -748,12 +830,14 @@ export const seedTaxonomy = async (repository: TaxonomyRepository) => {
 ### Step 11: API Endpoints - Reactions
 
 **Files to create:**
+
 - `src/app/api/sightings/[id]/react/route.ts`
 - `src/app/api/sightings/[id]/reactions/route.ts`
 
 **Tasks:**
 
 11.1. Create POST /api/sightings/[id]/react endpoint
+
 ```typescript
 export async function POST(
   request: NextRequest,
@@ -766,10 +850,7 @@ export async function POST(
   const result = await addSightingReaction(params.id, userId, type);
 
   if (!result.ok) {
-    return NextResponse.json(
-      { error: result.error.message },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: result.error.message }, { status: 400 });
   }
 
   return NextResponse.json({ success: true });
@@ -777,6 +858,7 @@ export async function POST(
 ```
 
 11.2. Create DELETE /api/sightings/[id]/react endpoint
+
 ```typescript
 export async function DELETE(
   request: NextRequest,
@@ -792,6 +874,7 @@ export async function DELETE(
 ```
 
 11.3. Create GET /api/sightings/[id]/reactions endpoint
+
 ```typescript
 export async function GET(
   request: NextRequest,
@@ -807,12 +890,14 @@ export async function GET(
 ### Step 12: API Endpoints - Reputation
 
 **Files to create:**
+
 - `src/app/api/users/[id]/reputation/route.ts`
 - `src/app/api/users/me/reputation/route.ts`
 
 **Tasks:**
 
 12.1. Create GET /api/users/[id]/reputation
+
 ```typescript
 export async function GET(
   request: NextRequest,
@@ -822,10 +907,7 @@ export async function GET(
   const events = await getReputationEvents(params.id, 20);
 
   if (!reputation) {
-    return NextResponse.json(
-      { error: "User not found" },
-      { status: 404 }
-    );
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
   return NextResponse.json({
@@ -843,6 +925,7 @@ export async function GET(
 ### Step 13: API Endpoints - Taxonomy
 
 **Files to create:**
+
 - `src/app/api/taxonomy/route.ts`
 - `src/app/api/taxonomy/categories/route.ts`
 - `src/app/api/taxonomy/subcategories/route.ts`
@@ -852,6 +935,7 @@ export async function GET(
 **Tasks:**
 
 13.1. Create GET /api/taxonomy endpoint (all at once)
+
 ```typescript
 export async function GET() {
   const taxonomy = await getTaxonomy();
@@ -860,6 +944,7 @@ export async function GET() {
 ```
 
 13.2. Create filtered endpoints for each level
+
 ```typescript
 // GET /api/taxonomy/subcategories?categoryId=X
 export async function GET(request: NextRequest) {
@@ -876,12 +961,14 @@ export async function GET(request: NextRequest) {
 ### Step 14: UI Components - Reaction Buttons
 
 **Files to create:**
+
 - `src/components/sightings/ReactionButtons.tsx`
 - `src/components/sightings/ReactionCounts.tsx`
 
 **Tasks:**
 
 14.1. Create reaction button component
+
 ```typescript
 export function ReactionButtons({ sightingId, userId }: Props) {
   const [reactions, setReactions] = useState<SightingReactionCounts>();
@@ -937,12 +1024,14 @@ export function ReactionButtons({ sightingId, userId }: Props) {
 ### Step 15: UI Components - Reputation Badge
 
 **Files to create:**
+
 - `src/components/reputation/ReputationBadge.tsx`
 - `src/components/reputation/ReputationTier.tsx`
 
 **Tasks:**
 
 15.1. Create reputation badge component
+
 ```typescript
 export function ReputationBadge({ userId }: Props) {
   const [reputation, setReputation] = useState<UserReputation>();
@@ -973,11 +1062,13 @@ export function ReputationBadge({ userId }: Props) {
 ### Step 16: Admin UI - Reputation Management
 
 **Files to create:**
+
 - `src/app/admin/reputation/page.tsx`
 
 **Tasks:**
 
 16.1. Create reputation leaderboard page
+
 ```typescript
 export default function AdminReputation() {
   const [topUsers, setTopUsers] = useState<UserReputation[]>([]);
@@ -1018,11 +1109,13 @@ export default function AdminReputation() {
 ### Step 17: Update Sighting Repository
 
 **Files to modify:**
+
 - All sighting repository implementations (in-memory, file, postgres)
 
 **Tasks:**
 
 17.1. Update repository to support new scoring columns
+
 ```typescript
 // Add to update() and create() methods
 upvotes: sighting.upvotes,
@@ -1035,6 +1128,7 @@ hot_score: sighting.hotScore,
 ```
 
 17.2. Add sorting by hot_score to list() method
+
 ```typescript
 // PostgreSQL example
 export async function list(filters: SightingFilters) {
@@ -1053,6 +1147,7 @@ export async function list(filters: SightingFilters) {
 ### Step 18: Testing
 
 **Files to create:**
+
 - `tests/unit/reputation.test.ts`
 - `tests/unit/sighting-reactions.test.ts`
 - `tests/unit/taxonomy.test.ts`
@@ -1061,6 +1156,7 @@ export async function list(filters: SightingFilters) {
 **Tasks:**
 
 18.1. Test reputation scoring
+
 ```typescript
 describe("Reputation System", () => {
   it("should award points for sighting creation", async () => {
@@ -1078,6 +1174,7 @@ describe("Reputation System", () => {
 ```
 
 18.2. Test sighting reactions
+
 ```typescript
 describe("Sighting Reactions", () => {
   it("should add upvote reaction", async () => {
@@ -1103,6 +1200,7 @@ describe("Sighting Reactions", () => {
 ```
 
 18.3. Test taxonomy queries
+
 ```typescript
 describe("Taxonomy", () => {
   it("should return all 15 categories", async () => {
@@ -1112,17 +1210,20 @@ describe("Taxonomy", () => {
 
   it("should filter subcategories by category", async () => {
     const subcategories = await getSubcategories("cat-community-events");
-    expect(subcategories.every(s => s.categoryId === "cat-community-events")).toBe(true);
+    expect(
+      subcategories.every((s) => s.categoryId === "cat-community-events")
+    ).toBe(true);
   });
 
   it("should filter types by tags", async () => {
     const types = await getTypes({ tags: ["dangerous"] });
-    expect(types.every(t => t.tags.includes("dangerous"))).toBe(true);
+    expect(types.every((t) => t.tags.includes("dangerous"))).toBe(true);
   });
 });
 ```
 
 18.4. E2E test reaction flow
+
 ```typescript
 test("user can react to sighting", async ({ page }) => {
   await page.goto("/sightings/test-id");
@@ -1178,6 +1279,7 @@ test("user can react to sighting", async ({ page }) => {
 8. Low-score sightings hide automatically (score < -5)
 
 **Metrics:**
+
 - API response time < 200ms for taxonomy queries
 - Reaction updates feel instant (< 100ms perceived)
 - Hot score calculation matches Reddit algorithm
@@ -1188,6 +1290,7 @@ test("user can react to sighting", async ({ page }) => {
 ## Next Steps (Phase 2)
 
 After Phase 1 completion, move to Phase 2:
+
 - Signal domain model
 - Signal matching engine
 - Signal subscriptions

@@ -102,7 +102,9 @@ export const postgresSightingReactionRepository = (
       return counts;
     },
 
-    async getReactionsForSighting(sightingId: SightingId): Promise<SightingReaction[]> {
+    async getReactionsForSighting(
+      sightingId: SightingId
+    ): Promise<SightingReaction[]> {
       const rows = await sql`
         SELECT sighting_id, user_id, type, created_at
         FROM sighting_reactions
@@ -118,7 +120,10 @@ export const postgresSightingReactionRepository = (
       }));
     },
 
-    async getUserReactions(userId: UserId, limit: number = 50): Promise<SightingReaction[]> {
+    async getUserReactions(
+      userId: UserId,
+      limit: number = 50
+    ): Promise<SightingReaction[]> {
       const rows = await sql`
         SELECT sighting_id, user_id, type, created_at
         FROM sighting_reactions

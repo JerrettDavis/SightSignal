@@ -11,8 +11,8 @@ const baseInput: NewSubscription = {
     polygon: {
       points: [
         { lat: 37.81, lng: -122.42 },
-        { lat: 37.81, lng: -122.40 },
-        { lat: 37.79, lng: -122.40 },
+        { lat: 37.81, lng: -122.4 },
+        { lat: 37.79, lng: -122.4 },
       ],
     },
   },
@@ -22,7 +22,7 @@ describe("createSubscription", () => {
   it("rejects invalid email", () => {
     const result = createSubscription(
       { ...baseInput, email: "nope" },
-      { id: "sub-1" as SubscriptionId, createdAt: new Date().toISOString() },
+      { id: "sub-1" as SubscriptionId, createdAt: new Date().toISOString() }
     );
 
     expect(result.ok).toBe(false);

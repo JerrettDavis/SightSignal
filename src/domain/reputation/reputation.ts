@@ -1,7 +1,9 @@
 import { err, ok, type DomainError, type Result } from "@/shared/result";
 
 export type UserId = string & { readonly __brand: "UserId" };
-export type ReputationEventId = string & { readonly __brand: "ReputationEventId" };
+export type ReputationEventId = string & {
+  readonly __brand: "ReputationEventId";
+};
 
 export type ReputationReason =
   | "sighting_created"

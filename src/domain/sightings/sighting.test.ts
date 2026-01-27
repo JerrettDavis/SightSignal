@@ -1,4 +1,8 @@
-import { createSighting, type NewSighting, type SightingId } from "@/domain/sightings/sighting";
+import {
+  createSighting,
+  type NewSighting,
+  type SightingId,
+} from "@/domain/sightings/sighting";
 
 const baseInput: NewSighting = {
   typeId: "type-bird" as NewSighting["typeId"],
@@ -12,7 +16,7 @@ describe("createSighting", () => {
   it("rejects empty descriptions", () => {
     const result = createSighting(
       { ...baseInput, description: " " },
-      { id: "s1" as SightingId, createdAt: new Date().toISOString() },
+      { id: "s1" as SightingId, createdAt: new Date().toISOString() }
     );
 
     expect(result.ok).toBe(false);

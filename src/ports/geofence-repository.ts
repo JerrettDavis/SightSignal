@@ -1,5 +1,9 @@
 import type { Polygon } from "@/domain/geo/geo";
-import type { Geofence, GeofenceId, GeofenceVisibility } from "@/domain/geofences/geofence";
+import type {
+  Geofence,
+  GeofenceId,
+  GeofenceVisibility,
+} from "@/domain/geofences/geofence";
 
 export type GeofenceFilters = {
   visibility?: GeofenceVisibility;

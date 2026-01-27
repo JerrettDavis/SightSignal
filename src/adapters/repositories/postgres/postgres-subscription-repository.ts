@@ -1,6 +1,12 @@
-import type { Subscription, SubscriptionId } from "@/domain/subscriptions/subscription";
+import type {
+  Subscription,
+  SubscriptionId,
+} from "@/domain/subscriptions/subscription";
 import type { Polygon } from "@/domain/geo/geo";
-import type { SubscriptionFilters, SubscriptionRepository } from "@/ports/subscription-repository";
+import type {
+  SubscriptionFilters,
+  SubscriptionRepository,
+} from "@/ports/subscription-repository";
 import { getSql } from "@/adapters/repositories/postgres/client";
 
 const mapRow = (row: Record<string, unknown>): Subscription => ({
@@ -22,8 +28,10 @@ export const postgresSubscriptionRepository = (): SubscriptionRepository => {
   return {
     async create(subscription) {
       const targetKind = subscription.target.kind;
-      const geofenceId = targetKind === "geofence" ? subscription.target.geofenceId : null;
-      const polygon = targetKind === "polygon" ? subscription.target.polygon : null;
+      const geofenceId =
+        targetKind === "geofence" ? subscription.target.geofenceId : null;
+      const polygon =
+        targetKind === "polygon" ? subscription.target.polygon : null;
 
       await sql`
         insert into subscriptions (
@@ -57,7 +65,8 @@ export const postgresSubscriptionRepository = (): SubscriptionRepository => {
       return rows.map(mapRow);
     },
     async getById(id: SubscriptionId) {
-      const rows = await sql`select * from subscriptions where id = ${id} limit 1`;
+      const rows =
+        await sql`select * from subscriptions where id = ${id} limit 1`;
       if (!rows.length) {
         return null;
       }
@@ -65,8 +74,10 @@ export const postgresSubscriptionRepository = (): SubscriptionRepository => {
     },
     async update(subscription) {
       const targetKind = subscription.target.kind;
-      const geofenceId = targetKind === "geofence" ? subscription.target.geofenceId : null;
-      const polygon = targetKind === "polygon" ? subscription.target.polygon : null;
+      const geofenceId =
+        targetKind === "geofence" ? subscription.target.geofenceId : null;
+      const polygon =
+        targetKind === "polygon" ? subscription.target.polygon : null;
 
       await sql`
         update subscriptions set

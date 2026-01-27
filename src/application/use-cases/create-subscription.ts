@@ -10,7 +10,7 @@ import type { SubscriptionRepository } from "@/ports/subscription-repository";
 import type { DomainError, Result } from "@/shared/result";
 
 export type CreateSubscription = (
-  input: NewSubscription,
+  input: NewSubscription
 ) => Promise<Result<Subscription, DomainError>>;
 
 type Dependencies = {
@@ -27,7 +27,10 @@ export const buildCreateSubscription = ({
   return async (input) => {
     const id = idGenerator.nextId() as SubscriptionId;
     const createdAt = clock.now();
-    const subscriptionResult = createSubscriptionEntity(input, { id, createdAt });
+    const subscriptionResult = createSubscriptionEntity(input, {
+      id,
+      createdAt,
+    });
 
     if (!subscriptionResult.ok) {
       return subscriptionResult;

@@ -8,7 +8,9 @@ type Dependencies = {
   repository: SightingRepository;
 };
 
-export const buildDeleteSighting = ({ repository }: Dependencies): DeleteSighting => {
+export const buildDeleteSighting = ({
+  repository,
+}: Dependencies): DeleteSighting => {
   return async (id) => {
     const existing = await repository.getById(id as SightingId);
 

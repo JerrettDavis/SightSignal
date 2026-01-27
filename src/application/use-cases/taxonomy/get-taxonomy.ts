@@ -20,9 +20,7 @@ type Dependencies = {
   repository: TaxonomyRepository;
 };
 
-export const buildGetTaxonomy = ({
-  repository,
-}: Dependencies): GetTaxonomy => {
+export const buildGetTaxonomy = ({ repository }: Dependencies): GetTaxonomy => {
   return async () => {
     const [categories, subcategories, types, tags] = await Promise.all([
       repository.getCategories(),

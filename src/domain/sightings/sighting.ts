@@ -66,7 +66,7 @@ const isIsoDate = (value: string) => Number.isFinite(Date.parse(value));
 
 export const createSighting = (
   input: NewSighting,
-  context: { id: SightingId; createdAt: string },
+  context: { id: SightingId; createdAt: string }
 ): Result<Sighting, DomainError> => {
   if (!hasText(input.description)) {
     return err({
@@ -146,7 +146,7 @@ export const createSighting = (
 
 export const updateSighting = (
   existing: Sighting,
-  updates: UpdateSighting,
+  updates: UpdateSighting
 ): Result<Sighting, DomainError> => {
   const merged: NewSighting = {
     typeId: updates.typeId ?? existing.typeId,
@@ -157,7 +157,10 @@ export const updateSighting = (
     importance: updates.importance ?? existing.importance,
     observedAt: updates.observedAt ?? existing.observedAt,
     fields: updates.fields ?? existing.fields,
-    reporterId: updates.reporterId !== undefined ? updates.reporterId : existing.reporterId,
+    reporterId:
+      updates.reporterId !== undefined
+        ? updates.reporterId
+        : existing.reporterId,
   };
 
   const validationResult = createSighting(merged, {

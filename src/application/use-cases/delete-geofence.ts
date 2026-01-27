@@ -8,7 +8,9 @@ type Dependencies = {
   repository: GeofenceRepository;
 };
 
-export const buildDeleteGeofence = ({ repository }: Dependencies): DeleteGeofence => {
+export const buildDeleteGeofence = ({
+  repository,
+}: Dependencies): DeleteGeofence => {
   return async (id) => {
     const existing = await repository.getById(id as GeofenceId);
 

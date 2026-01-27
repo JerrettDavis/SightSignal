@@ -1,5 +1,7 @@
 import type { AdminUser, AdminUserId } from "@/domain/auth/admin-user";
 
+export type { AdminUser, AdminUserId };
+
 export type TokenPayload = {
   userId: AdminUserId;
   username: string;

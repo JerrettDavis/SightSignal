@@ -21,8 +21,13 @@ export type SightingReactionRepository = {
     userId: UserId
   ) => Promise<SightingReaction | null>;
   getCounts: (sightingId: SightingId) => Promise<SightingReactionCounts>;
-  getReactionsForSighting: (sightingId: SightingId) => Promise<SightingReaction[]>;
+  getReactionsForSighting: (
+    sightingId: SightingId
+  ) => Promise<SightingReaction[]>;
 
   // Get user's reactions
-  getUserReactions: (userId: UserId, limit?: number) => Promise<SightingReaction[]>;
+  getUserReactions: (
+    userId: UserId,
+    limit?: number
+  ) => Promise<SightingReaction[]>;
 };

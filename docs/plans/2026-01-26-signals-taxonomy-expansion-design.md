@@ -7,6 +7,7 @@
 ## Overview
 
 Transform SightSignal from a basic sighting tracker into a comprehensive community signal platform with:
+
 - **Signals**: Discoverable, subscribable feeds (geofence + category filters)
 - **Massive taxonomy expansion**: 15 core categories, 100+ types, subcategories, tags
 - **Reputation system**: Reddit-style voting and quality control
@@ -26,25 +27,26 @@ A Signal is a discoverable, subscribable feed configuration that combines a geog
 ```typescript
 type Signal = {
   id: SignalId;
-  name: string;              // "Tulsa Police Activity"
-  slug: string;              // "tulsa-police-activity" (URL-friendly)
+  name: string; // "Tulsa Police Activity"
+  slug: string; // "tulsa-police-activity" (URL-friendly)
   description: string;
-  geofenceId: string;        // References existing geofence
-  categoryIds: string[];     // Can be empty (all categories)
-  subcategoryIds: string[];  // Optional filtering
-  typeIds: string[];         // Optional filtering
-  tags: string[];            // Additional filtering
+  geofenceId: string; // References existing geofence
+  categoryIds: string[]; // Can be empty (all categories)
+  subcategoryIds: string[]; // Optional filtering
+  typeIds: string[]; // Optional filtering
+  tags: string[]; // Additional filtering
   visibility: "public" | "private";
-  creatorId: string;         // User who created it
-  verified: boolean;         // Admin-vetted flag
-  subscriberCount: number;   // Cached for performance
-  viewCount: number;         // RSS/page views
+  creatorId: string; // User who created it
+  verified: boolean; // Admin-vetted flag
+  subscriberCount: number; // Cached for performance
+  viewCount: number; // RSS/page views
   createdAt: string;
   updatedAt: string;
 };
 ```
 
 **Key Characteristics:**
+
 - Signals are reusable: Multiple signals can share the same geofence
 - Filters are additive: Empty arrays mean "all" (no filter)
 - Visibility controls discovery, not access (public URLs work either way)
@@ -54,27 +56,28 @@ type Signal = {
 
 **Reputation Sources:**
 
-| Action | Reputation Change |
-|--------|------------------|
-| Create sighting | +1 |
-| Create signal | +5 |
-| Someone subscribes to your signal | +2 |
-| Your sighting gets upvoted | +1 |
-| Your sighting gets confirmed | +2 |
-| Your sighting gets disputed | -1 |
-| Admin verifies your signal | +50 + verified badge |
-| Report upheld against you | -10 |
+| Action                            | Reputation Change    |
+| --------------------------------- | -------------------- |
+| Create sighting                   | +1                   |
+| Create signal                     | +5                   |
+| Someone subscribes to your signal | +2                   |
+| Your sighting gets upvoted        | +1                   |
+| Your sighting gets confirmed      | +2                   |
+| Your sighting gets disputed       | -1                   |
+| Admin verifies your signal        | +50 + verified badge |
+| Report upheld against you         | -10                  |
 
 **Signal Visibility Tiers:**
 
-| Tier | Creator Rep | Visibility |
-|------|-------------|------------|
-| Verified | N/A (admin-vetted) | Always visible, featured in discovery |
-| Trusted | ≥ 50 | Visible by default |
-| New | 10-49 | Visible with "New Creator" badge |
-| Unverified | < 10 | Hidden unless user opts in "show all signals" |
+| Tier       | Creator Rep        | Visibility                                    |
+| ---------- | ------------------ | --------------------------------------------- |
+| Verified   | N/A (admin-vetted) | Always visible, featured in discovery         |
+| Trusted    | ≥ 50               | Visible by default                            |
+| New        | 10-49              | Visible with "New Creator" badge              |
+| Unverified | < 10               | Hidden unless user opts in "show all signals" |
 
 **Business Rules:**
+
 - Reputation never goes below 0
 - Reputation events are immutable (audit log)
 - Users can see their reputation history
@@ -106,8 +109,8 @@ type SightingType = {
   id: string;
   label: string;
   categoryId: string;
-  subcategoryId?: string;  // Optional grouping
-  tags: string[];          // Additional metadata
+  subcategoryId?: string; // Optional grouping
+  tags: string[]; // Additional metadata
   icon?: string;
 };
 ```
@@ -177,6 +180,7 @@ type SightingType = {
     - Types: Protest, Rally, Town hall meeting, Public hearing, Petition drive, Community meeting
 
 **Tag Examples:**
+
 - `["urgent", "safety", "alert"]`
 - `["family-friendly", "free", "outdoor"]`
 - `["rare", "photo-worthy", "limited-time"]`
@@ -198,17 +202,18 @@ type SightingReaction = {
 type SightingWithScore = Sighting & {
   upvotes: number;
   downvotes: number;
-  confirmations: number;    // "I saw this too"
-  disputes: number;         // "This isn't accurate"
+  confirmations: number; // "I saw this too"
+  disputes: number; // "This isn't accurate"
   spamReports: number;
-  score: number;            // Calculated score
-  hotScore: number;         // Time-decay ranking
+  score: number; // Calculated score
+  hotScore: number; // Time-decay ranking
 };
 ```
 
 ### Scoring Algorithm
 
 **Base Score:**
+
 ```
 baseScore = upvotes
           - downvotes
@@ -218,23 +223,25 @@ baseScore = upvotes
 ```
 
 **Hot Score (Reddit-style):**
+
 ```
 hotScore = baseScore / (age_in_hours + 2)^1.5
 ```
 
 This creates time-decay ranking where:
+
 - New quality content rises quickly
 - Old content naturally decays
 - High-quality old content stays visible longer than low-quality new content
 
 ### Visibility Rules
 
-| Score Range | Visibility |
-|-------------|-----------|
-| ≥ 0 | Visible to all users |
-| -5 to -1 | Hidden by default, "Show low-quality posts" reveals |
-| ≤ -5 | Hidden, only visible to creator and admins |
-| spamReports ≥ 3 | Auto-hidden pending admin review |
+| Score Range     | Visibility                                          |
+| --------------- | --------------------------------------------------- |
+| ≥ 0             | Visible to all users                                |
+| -5 to -1        | Hidden by default, "Show low-quality posts" reveals |
+| ≤ -5            | Hidden, only visible to creator and admins          |
+| spamReports ≥ 3 | Auto-hidden pending admin review                    |
 
 ### Feed Sorting Options
 
@@ -259,8 +266,11 @@ This creates time-decay ranking where:
 ```typescript
 // Core abstraction
 interface NotificationChannel {
-  name: string;  // "email", "push", "webhook", "sms"
-  send(notification: Notification, subscriber: Subscriber): Promise<Result<void>>;
+  name: string; // "email", "push", "webhook", "sms"
+  send(
+    notification: Notification,
+    subscriber: Subscriber
+  ): Promise<Result<void>>;
   validateConfig(config: unknown): Result<ChannelConfig>;
 }
 
@@ -280,13 +290,13 @@ type Notification = {
 type Subscriber = {
   id: string;
   signalId: string;
-  userId?: string;  // For authenticated subscribers
+  userId?: string; // For authenticated subscribers
   channels: ChannelSubscription[];
 };
 
 type ChannelSubscription = {
   channel: "email" | "push" | "webhook" | "sms";
-  config: unknown;  // Channel-specific config
+  config: unknown; // Channel-specific config
   enabled: boolean;
 };
 ```
@@ -303,12 +313,14 @@ type ChannelSubscription = {
 ### Initial Channel Plugins
 
 **EmailNotifier**
+
 - Uses existing email infrastructure
 - Config: `{ email: string }`
 - Batching: Group multiple sightings if < 5 min apart
 - Rate limit: 100/hour per subscriber
 
 **WebhookNotifier**
+
 - POST to user-provided URL
 - Config: `{ url: string, secret?: string }`
 - Payload: JSON with signature header
@@ -316,12 +328,14 @@ type ChannelSubscription = {
 - Timeout: 10 seconds
 
 **PushNotifier**
+
 - Browser Push API via service worker
 - Config: `{ subscription: PushSubscription }`
 - Requires HTTPS
 - Handles expired subscriptions gracefully
 
 **Future Plugins:**
+
 - SMSNotifier (Twilio)
 - AppNotifier (mobile app push)
 - DiscordNotifier (webhook)
@@ -407,6 +421,7 @@ GET /api/rss/query?category=X&type=Y&geofence=Z&tags=A,B
 ### Geographic Data Strategy
 
 **Phase 1: Top 500 US Metro Areas**
+
 - **Source**: US Census Bureau TIGER/Line Shapefiles
 - **Coverage**: ~80% of US population
 - **Tulsa included**: Metro population ~1 million
@@ -420,13 +435,14 @@ GET /api/rss/query?category=X&type=Y&geofence=Z&tags=A,B
    - Major neighborhoods (census tracts)
 
 2. **Process GeoJSON**
+
    ```javascript
-   import * as turf from '@turf/turf';
+   import * as turf from "@turf/turf";
 
    // Simplify polygon to reduce points
    const simplified = turf.simplify(polygon, {
-     tolerance: 0.001,  // ~100m precision
-     highQuality: true
+     tolerance: 0.001, // ~100m precision
+     highQuality: true,
    });
 
    // Validate polygon
@@ -447,22 +463,23 @@ GET /api/rss/query?category=X&type=Y&geofence=Z&tags=A,B
 
 For each city (e.g., "Tulsa"), auto-generate:
 
-| Signal Name | Filters | Description Template |
-|------------|---------|---------------------|
-| `{city}-community-events` | All Community Events | Community events, festivals, and gatherings in {city} |
-| `{city}-police-activity` | All Law Enforcement | Police and law enforcement activity in {city} |
-| `{city}-lost-pets` | Lost & Found → Pets | Lost and found pets in {city} |
-| `{city}-curb-alerts` | All Curb Alerts | Free stuff and curb finds in {city} |
-| `{city}-food-trucks` | Food & Drink → Mobile | Food trucks and mobile vendors in {city} |
-| `{city}-wildlife` | All Wildlife | Wildlife sightings in {city} |
-| `{city}-weather-alerts` | Weather → Severe only | Severe weather and conditions in {city} |
-| `{city}-road-hazards` | Hazards + Infrastructure | Road hazards and infrastructure issues in {city} |
-| `{city}-garage-sales` | Community Events → Sales | Garage and estate sales in {city} |
-| `{city}-market-activity` | All Market Activity | Farmers markets, craft fairs, and vendor events in {city} |
-| `{city}-civic-engagement` | All Civic Engagement | Protests, town halls, and civic events in {city} |
-| `{city}-everything` | All categories | All sightings and activity in {city} |
+| Signal Name               | Filters                  | Description Template                                      |
+| ------------------------- | ------------------------ | --------------------------------------------------------- |
+| `{city}-community-events` | All Community Events     | Community events, festivals, and gatherings in {city}     |
+| `{city}-police-activity`  | All Law Enforcement      | Police and law enforcement activity in {city}             |
+| `{city}-lost-pets`        | Lost & Found → Pets      | Lost and found pets in {city}                             |
+| `{city}-curb-alerts`      | All Curb Alerts          | Free stuff and curb finds in {city}                       |
+| `{city}-food-trucks`      | Food & Drink → Mobile    | Food trucks and mobile vendors in {city}                  |
+| `{city}-wildlife`         | All Wildlife             | Wildlife sightings in {city}                              |
+| `{city}-weather-alerts`   | Weather → Severe only    | Severe weather and conditions in {city}                   |
+| `{city}-road-hazards`     | Hazards + Infrastructure | Road hazards and infrastructure issues in {city}          |
+| `{city}-garage-sales`     | Community Events → Sales | Garage and estate sales in {city}                         |
+| `{city}-market-activity`  | All Market Activity      | Farmers markets, craft fairs, and vendor events in {city} |
+| `{city}-civic-engagement` | All Civic Engagement     | Protests, town halls, and civic events in {city}          |
+| `{city}-everything`       | All categories           | All sightings and activity in {city}                      |
 
 **Generated Signal Metadata:**
+
 ```typescript
 {
   creatorId: "system",
@@ -510,6 +527,7 @@ scripts/data/geojson/      // Processed GeoJSON
 ### Signal Editor Form
 
 **Core Fields:**
+
 - **Name**: Text input, 200 char max, required
 - **Slug**: Auto-generated from name, editable, must be unique
 - **Description**: Rich text, 500 char max, optional
@@ -518,17 +536,20 @@ scripts/data/geojson/      // Processed GeoJSON
 - **Visibility**: Toggle (public/private)
 
 **Filtering (all optional):**
+
 - **Categories**: Multi-select chip component
 - **Subcategories**: Multi-select, filtered by selected categories
 - **Types**: Multi-select, filtered by selected subcategories
 - **Tags**: Free-form tag input with autocomplete from existing tags
 
 **Preview Section:**
+
 - Live count: "This signal will match X sightings in the last 30 days"
 - Sample sightings grid (5 most recent matches)
 - Updates in real-time as filters change
 
 **Validation:**
+
 - At least one of: category, subcategory, type, or tag must be selected
 - Or use empty filters to mean "all content in geofence"
 
@@ -537,18 +558,21 @@ scripts/data/geojson/      // Processed GeoJSON
 **Discovery Page** (`/signals` or `/discover`)
 
 **Tab Navigation:**
+
 - **Trending**: Sorted by subscriber growth rate (last 7 days)
 - **Verified**: Admin-vetted signals only
 - **Near You**: Signals for geofences containing user's location
 - **All**: Paginated list, filterable
 
 **Filters:**
+
 - Search: Full-text on name/description
 - By category: Dropdown filter
 - By location: City/state selector
 - Reputation tier: Show all / Trusted+ / Verified only
 
 **Signal Card:**
+
 ```
 [Icon] Signal Name                    [Verified Badge]
 Description text...
@@ -587,6 +611,7 @@ Description text...
    - RSS: Copy feed link
 
 **Subscribe Flow:**
+
 ```
 1. Click "Subscribe"
 2. Modal: "How would you like to receive notifications?"
@@ -602,6 +627,7 @@ Description text...
 ### New API Endpoints
 
 **Signals:**
+
 ```
 POST   /api/signals                      // Create signal
 GET    /api/signals                      // List/search signals
@@ -615,6 +641,7 @@ GET    /api/signals/{id}/sightings       // Get matching sightings
 ```
 
 **Admin Signal Management:**
+
 ```
 GET    /api/admin/signals                    // All signals with moderation info
 PATCH  /api/admin/signals/{id}/verify        // Mark verified
@@ -623,6 +650,7 @@ GET    /api/admin/signals/reports            // Reported signals queue
 ```
 
 **Sighting Reactions:**
+
 ```
 POST   /api/sightings/{id}/react             // Add reaction
 DELETE /api/sightings/{id}/react             // Remove reaction
@@ -630,12 +658,14 @@ GET    /api/sightings/{id}/reactions         // Get reaction counts
 ```
 
 **User Reputation:**
+
 ```
 GET    /api/users/{id}/reputation            // Get user rep & history
 GET    /api/users/me/reputation              // Current user's reputation
 ```
 
 **RSS Feeds:**
+
 ```
 GET    /api/rss/signal/{id}
 GET    /api/rss/signal/{slug}
@@ -647,6 +677,7 @@ GET    /api/rss/query?params...
 ```
 
 **Taxonomy Browsing:**
+
 ```
 GET    /api/taxonomy/categories             // All categories
 GET    /api/taxonomy/subcategories          // Filtered by category
@@ -788,6 +819,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ## 9. Implementation Phases
 
 ### Phase 1: Core Infrastructure (Foundation)
+
 **Goal**: Reputation system and expanded taxonomy
 
 - [ ] Add user reputation tables (users, events, scoring)
@@ -803,6 +835,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ---
 
 ### Phase 2: Signals Domain (Core Feature)
+
 **Goal**: Signal creation and subscription system
 
 - [ ] Signal domain model and validation
@@ -818,6 +851,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ---
 
 ### Phase 3: Notification Queue System
+
 **Goal**: Reliable multi-channel notification delivery
 
 - [ ] Set up Redis + BullMQ infrastructure
@@ -835,6 +869,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ---
 
 ### Phase 4: RSS Feeds
+
 **Goal**: Generate RSS feeds for any query
 
 - [ ] RSS generation utilities (XML formatting, Geo-RSS)
@@ -850,6 +885,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ---
 
 ### Phase 5: City Boundary Seeding
+
 **Goal**: Auto-generate 500 US metro signals
 
 - [ ] Download TIGER/Line shapefiles for top 500 metros (including Tulsa)
@@ -865,6 +901,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ---
 
 ### Phase 6: Signal UI
+
 **Goal**: User-facing signal creation and discovery
 
 - [ ] Signal discovery page (`/signals`) with trending/verified/near you tabs
@@ -881,6 +918,7 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ---
 
 ### Phase 7: Polish & Launch
+
 **Goal**: Production-ready for Tulsa soft launch
 
 - [ ] Reporting/moderation tools for admins
@@ -899,16 +937,19 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 ## Success Metrics
 
 **Phase 1-3 (Foundation):**
+
 - Reputation system functional (users earning points)
 - Signals being created and subscribed to
 - Notifications delivering reliably (>99% success rate)
 
 **Phase 4-6 (Features):**
+
 - 6,000+ city signals seeded
 - RSS feeds generating correctly
 - Signal discovery UI functional
 
 **Phase 7 (Launch):**
+
 - 100+ Tulsa users signed up
 - 1,000+ sightings created
 - 500+ signal subscriptions
@@ -919,13 +960,13 @@ CREATE INDEX idx_notification_deliveries_signal ON notification_deliveries(signa
 
 ## Technical Risks & Mitigations
 
-| Risk | Impact | Mitigation |
-|------|--------|-----------|
-| Redis queue infrastructure cost | Medium | Use Redis Cloud free tier initially, scale as needed |
-| TIGER/Line data size and processing | Low | Process incrementally, cache GeoJSON, simplify polygons |
-| Spam signals from low-rep users | High | Hide unverified signals by default, strong reporting flow |
-| Notification delivery failures | High | Retry logic, dead letter queue, admin monitoring dashboard |
-| RSS feed performance with complex queries | Medium | Aggressive caching (5min), pagination, query optimization |
+| Risk                                          | Impact | Mitigation                                                        |
+| --------------------------------------------- | ------ | ----------------------------------------------------------------- |
+| Redis queue infrastructure cost               | Medium | Use Redis Cloud free tier initially, scale as needed              |
+| TIGER/Line data size and processing           | Low    | Process incrementally, cache GeoJSON, simplify polygons           |
+| Spam signals from low-rep users               | High   | Hide unverified signals by default, strong reporting flow         |
+| Notification delivery failures                | High   | Retry logic, dead letter queue, admin monitoring dashboard        |
+| RSS feed performance with complex queries     | Medium | Aggressive caching (5min), pagination, query optimization         |
 | User confusion about signals vs subscriptions | Medium | Clear onboarding, tooltips, example signals prominently displayed |
 
 ---

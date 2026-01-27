@@ -38,7 +38,7 @@ const isEmail = (value: string) => /.+@.+\..+/.test(value);
 
 export const createSubscription = (
   input: NewSubscription,
-  context: { id: SubscriptionId; createdAt: string },
+  context: { id: SubscriptionId; createdAt: string }
 ): Result<Subscription, DomainError> => {
   if (!isEmail(input.email)) {
     return err({
@@ -76,7 +76,7 @@ export const createSubscription = (
 
 export const updateSubscription = (
   existing: Subscription,
-  updates: UpdateSubscription,
+  updates: UpdateSubscription
 ): Result<Subscription, DomainError> => {
   const merged: NewSubscription = {
     email: updates.email ?? existing.email,

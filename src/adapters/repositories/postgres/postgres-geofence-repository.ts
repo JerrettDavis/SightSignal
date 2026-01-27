@@ -1,6 +1,9 @@
 import type { Polygon } from "@/domain/geo/geo";
 import type { Geofence, GeofenceId } from "@/domain/geofences/geofence";
-import type { GeofenceFilters, GeofenceRepository } from "@/ports/geofence-repository";
+import type {
+  GeofenceFilters,
+  GeofenceRepository,
+} from "@/ports/geofence-repository";
 import { polygonWithinPolygon } from "@/shared/geo";
 import { getSql } from "@/adapters/repositories/postgres/client";
 
@@ -17,7 +20,9 @@ const applyBounds = (geofences: Geofence[], bounds?: Polygon) => {
   if (!bounds) {
     return geofences;
   }
-  return geofences.filter((geofence) => polygonWithinPolygon(geofence.polygon, bounds));
+  return geofences.filter((geofence) =>
+    polygonWithinPolygon(geofence.polygon, bounds)
+  );
 };
 
 export const postgresGeofenceRepository = (): GeofenceRepository => {

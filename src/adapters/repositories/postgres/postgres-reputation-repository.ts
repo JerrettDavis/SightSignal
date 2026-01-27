@@ -64,7 +64,10 @@ export const postgresReputationRepository = (
       `;
     },
 
-    async getEvents(userId: UserId, limit: number = 50): Promise<ReputationEvent[]> {
+    async getEvents(
+      userId: UserId,
+      limit: number = 50
+    ): Promise<ReputationEvent[]> {
       const rows = await sql`
         SELECT id, user_id, amount, reason, reference_id, created_at
         FROM reputation_events

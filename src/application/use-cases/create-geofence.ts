@@ -9,7 +9,9 @@ import type { GeofenceRepository } from "@/ports/geofence-repository";
 import type { IdGenerator } from "@/ports/id-generator";
 import type { DomainError, Result } from "@/shared/result";
 
-export type CreateGeofence = (input: NewGeofence) => Promise<Result<Geofence, DomainError>>;
+export type CreateGeofence = (
+  input: NewGeofence
+) => Promise<Result<Geofence, DomainError>>;
 
 type Dependencies = {
   repository: GeofenceRepository;
@@ -17,7 +19,11 @@ type Dependencies = {
   clock: Clock;
 };
 
-export const buildCreateGeofence = ({ repository, idGenerator, clock }: Dependencies): CreateGeofence => {
+export const buildCreateGeofence = ({
+  repository,
+  idGenerator,
+  clock,
+}: Dependencies): CreateGeofence => {
   return async (input) => {
     const id = idGenerator.nextId() as GeofenceId;
     const createdAt = clock.now();

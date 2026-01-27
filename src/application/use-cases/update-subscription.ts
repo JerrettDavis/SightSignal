@@ -16,7 +16,9 @@ type Dependencies = {
   repository: SubscriptionRepository;
 };
 
-export const buildUpdateSubscription = ({ repository }: Dependencies): UpdateSubscription => {
+export const buildUpdateSubscription = ({
+  repository,
+}: Dependencies): UpdateSubscription => {
   return async (id, updates) => {
     const existing = await repository.getById(id as SubscriptionId);
 

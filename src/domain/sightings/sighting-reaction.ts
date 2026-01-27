@@ -64,7 +64,7 @@ export const calculateHotScore = (
   // Time decay factor: (hours + 2)^1.5
   const decay = Math.pow(ageInHours + 2, 1.5);
 
-  return sign * order / decay;
+  return (sign * order) / decay;
 };
 
 // Get age in hours from ISO timestamp

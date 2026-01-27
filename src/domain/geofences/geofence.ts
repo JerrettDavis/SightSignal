@@ -32,7 +32,7 @@ const hasText = (value: string) => value.trim().length > 0;
 
 export const createGeofence = (
   input: NewGeofence,
-  context: { id: GeofenceId; createdAt: string },
+  context: { id: GeofenceId; createdAt: string }
 ): Result<Geofence, DomainError> => {
   if (!hasText(input.name)) {
     return err({
@@ -67,7 +67,7 @@ export const createGeofence = (
 
 export const updateGeofence = (
   existing: Geofence,
-  updates: UpdateGeofence,
+  updates: UpdateGeofence
 ): Result<Geofence, DomainError> => {
   const merged: NewGeofence = {
     name: updates.name ?? existing.name,

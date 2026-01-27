@@ -34,7 +34,9 @@ export type TaxonomyFilters = {
 };
 
 // Validation functions
-export const validateCategoryId = (id: string): Result<CategoryId, DomainError> => {
+export const validateCategoryId = (
+  id: string
+): Result<CategoryId, DomainError> => {
   if (!id || id.trim().length === 0) {
     return err({
       code: "taxonomy.invalid_category_id",
@@ -46,7 +48,9 @@ export const validateCategoryId = (id: string): Result<CategoryId, DomainError> 
   return ok(id as CategoryId);
 };
 
-export const validateSubcategoryId = (id: string): Result<SubcategoryId, DomainError> => {
+export const validateSubcategoryId = (
+  id: string
+): Result<SubcategoryId, DomainError> => {
   if (!id || id.trim().length === 0) {
     return err({
       code: "taxonomy.invalid_subcategory_id",
@@ -58,7 +62,9 @@ export const validateSubcategoryId = (id: string): Result<SubcategoryId, DomainE
   return ok(id as SubcategoryId);
 };
 
-export const validateSightingTypeId = (id: string): Result<SightingTypeId, DomainError> => {
+export const validateSightingTypeId = (
+  id: string
+): Result<SightingTypeId, DomainError> => {
   if (!id || id.trim().length === 0) {
     return err({
       code: "taxonomy.invalid_type_id",
@@ -89,9 +95,7 @@ export const filterTypesByTags = (
   types: SightingType[],
   tags: string[]
 ): SightingType[] => {
-  return types.filter((type) =>
-    tags.some((tag) => type.tags.includes(tag))
-  );
+  return types.filter((type) => tags.some((tag) => type.tags.includes(tag)));
 };
 
 export const filterSubcategoriesByCategory = (

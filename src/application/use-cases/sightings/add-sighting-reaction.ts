@@ -96,11 +96,23 @@ export const buildAddSightingReaction = ({
       });
 
       if (reactionType === "upvote") {
-        await addReputationEvent(sighting.reporterId, "sighting_upvoted", sightingId);
+        await addReputationEvent(
+          sighting.reporterId,
+          "sighting_upvoted",
+          sightingId
+        );
       } else if (reactionType === "confirmed") {
-        await addReputationEvent(sighting.reporterId, "sighting_confirmed", sightingId);
+        await addReputationEvent(
+          sighting.reporterId,
+          "sighting_confirmed",
+          sightingId
+        );
       } else if (reactionType === "disputed") {
-        await addReputationEvent(sighting.reporterId, "sighting_disputed", sightingId);
+        await addReputationEvent(
+          sighting.reporterId,
+          "sighting_disputed",
+          sightingId
+        );
       }
     }
 

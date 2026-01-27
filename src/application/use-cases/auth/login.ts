@@ -33,7 +33,7 @@ export const buildLogin = ({
 
     const isValid = await passwordService.verify(
       credentials.password,
-      user.passwordHash,
+      user.passwordHash
     );
 
     if (!isValid) {

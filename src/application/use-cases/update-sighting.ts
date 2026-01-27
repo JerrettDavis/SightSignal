@@ -16,7 +16,9 @@ type Dependencies = {
   repository: SightingRepository;
 };
 
-export const buildUpdateSighting = ({ repository }: Dependencies): UpdateSighting => {
+export const buildUpdateSighting = ({
+  repository,
+}: Dependencies): UpdateSighting => {
   return async (id, updates) => {
     const existing = await repository.getById(id as SightingId);
 

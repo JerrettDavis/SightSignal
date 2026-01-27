@@ -1,4 +1,7 @@
-import type { Subscription, SubscriptionId } from "@/domain/subscriptions/subscription";
+import type {
+  Subscription,
+  SubscriptionId,
+} from "@/domain/subscriptions/subscription";
 
 export type SubscriptionFilters = {
   email?: string;
