@@ -114,31 +114,39 @@ export const postgresSightingRepository = (): SightingRepository => {
       return mapRow(rows[0]);
     },
     async list(filters: SightingFilters) {
+      // Build WHERE clause conditions
+      const conditions: string[] = [];
+      if (filters.minHotScore !== undefined) {
+        conditions.push(`hot_score >= ${filters.minHotScore}`);
+      }
+      if (filters.status) {
+        conditions.push(`status = '${filters.status}'`);
+      }
+      if (filters.typeIds && filters.typeIds.length) {
+        const ids = filters.typeIds.map((id) => `'${id}'`).join(", ");
+        conditions.push(`type_id IN (${ids})`);
+      }
+      if (filters.categoryIds && filters.categoryIds.length) {
+        const ids = filters.categoryIds.map((id) => `'${id}'`).join(", ");
+        conditions.push(`category_id IN (${ids})`);
+      }
+
+      const whereClause =
+        conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+      const limit = filters.limit !== undefined ? `LIMIT ${filters.limit}` : "";
+      const offset =
+        filters.offset !== undefined ? `OFFSET ${filters.offset}` : "";
+
       // Query with ordering by hot_score (descending), then created_at (descending)
-      const rows = await sql`
-        select * from sightings
-        order by hot_score desc, created_at desc
-      `;
-      const mapped = rows.map(mapRow).filter((sighting) => {
-        if (filters.status && sighting.status !== filters.status) {
-          return false;
-        }
-        if (
-          filters.typeIds &&
-          filters.typeIds.length &&
-          !filters.typeIds.includes(sighting.typeId)
-        ) {
-          return false;
-        }
-        if (
-          filters.categoryIds &&
-          filters.categoryIds.length &&
-          !filters.categoryIds.includes(sighting.categoryId)
-        ) {
-          return false;
-        }
-        return true;
-      });
+      const rows = await sql.unsafe(`
+        SELECT * FROM sightings
+        ${whereClause}
+        ORDER BY hot_score DESC, created_at DESC
+        ${limit}
+        ${offset}
+      `);
+
+      const mapped = rows.map(mapRow);
       return applyBounds(mapped, filters.bounds);
     },
     async update(sighting) {

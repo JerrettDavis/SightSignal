@@ -9,6 +9,7 @@ export type SightingType = {
   categoryId: string;
 };
 
+// Make arrays mutable so they can be edited through the admin API
 export const categories: Category[] = [
   { id: "cat-nature", label: "Nature" },
   { id: "cat-public-safety", label: "Public Safety" },

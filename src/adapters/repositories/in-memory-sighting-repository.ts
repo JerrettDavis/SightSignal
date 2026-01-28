@@ -98,7 +98,7 @@ export const inMemorySightingRepository = (): SightingRepository => {
       }));
 
       // Sort by hot score (descending), then by created_at (descending)
-      return withDefaults.sort((a, b) => {
+      const sorted = withDefaults.sort((a, b) => {
         // First sort by hot score
         if (b.hotScore !== a.hotScore) {
           return b.hotScore - a.hotScore;
@@ -108,6 +108,20 @@ export const inMemorySightingRepository = (): SightingRepository => {
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
       });
+
+      // Apply minHotScore filter
+      const scoreFiltered =
+        filters.minHotScore !== undefined
+          ? sorted.filter((s) => s.hotScore >= filters.minHotScore!)
+          : sorted;
+
+      // Apply limit and offset
+      const offset = filters.offset ?? 0;
+      const limit = filters.limit;
+      if (limit !== undefined) {
+        return scoreFiltered.slice(offset, offset + limit);
+      }
+      return scoreFiltered.slice(offset);
     },
     async update(sighting) {
       // Preserve all scoring fields during update

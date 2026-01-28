@@ -41,6 +41,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     { path: "/admin/geofences", label: "Geofences" },
     { path: "/admin/subscriptions", label: "Subscriptions" },
     { path: "/admin/reputation", label: "Reputation" },
+    { path: "/admin/taxonomy", label: "Taxonomy" },
   ];
 
   const isActive = (path: string) => {

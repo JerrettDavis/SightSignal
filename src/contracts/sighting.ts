@@ -44,6 +44,13 @@ export const SightingSchema = CreateSightingRequestSchema.extend({
   id: z.string(),
   status: SightingStatusSchema,
   createdAt: z.string().datetime(),
+  upvotes: z.number().default(0),
+  downvotes: z.number().default(0),
+  confirmations: z.number().default(0),
+  disputes: z.number().default(0),
+  spamReports: z.number().default(0),
+  score: z.number().default(0),
+  hotScore: z.number().default(0),
 });
 
 export type CreateSightingRequest = z.infer<typeof CreateSightingRequestSchema>;

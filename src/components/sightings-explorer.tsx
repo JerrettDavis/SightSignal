@@ -64,6 +64,8 @@ const toCard = (sighting: z.infer<typeof SightingSchema>): SightingCard => ({
   observedAtLabel: formatRelativeTime(sighting.observedAt),
   location: sighting.location,
   reactions: [],
+  score: sighting.score,
+  hotScore: sighting.hotScore,
 });
 
 type SelectedGeofence = {

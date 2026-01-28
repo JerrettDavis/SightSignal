@@ -17,6 +17,8 @@ export type SightingCard = {
     lng: number;
   };
   reactions: Reaction[];
+  score?: number;
+  hotScore?: number;
 };
 
 export const mockSightings: SightingCard[] = [

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { GeofenceMapEditor } from "@/components/admin/GeofenceMapEditor";
 
 interface Geofence {
   id: string;
@@ -23,6 +24,8 @@ export default function AdminGeofences() {
     name: "",
     visibility: "",
   });
+  const [visualEditingGeofence, setVisualEditingGeofence] =
+    useState<Geofence | null>(null);
 
   const fetchGeofences = async () => {
     try {
@@ -145,6 +148,40 @@ export default function AdminGeofences() {
       setEditingGeofence(null);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to update geofence");
+    }
+  };
+
+  const handleVisualEdit = (geofence: Geofence) => {
+    setVisualEditingGeofence(geofence);
+  };
+
+  const handleSaveVisualEdit = async (
+    points: Array<{ lat: number; lng: number }>
+  ) => {
+    if (!visualEditingGeofence) return;
+
+    try {
+      const response = await fetch(
+        `/api/admin/geofences/${visualEditingGeofence.id}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            polygon: { points },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update geofence shape");
+      }
+
+      await fetchGeofences();
+      setVisualEditingGeofence(null);
+    } catch (err) {
+      alert(
+        err instanceof Error ? err.message : "Failed to update geofence shape"
+      );
     }
   };
 
@@ -277,10 +314,16 @@ export default function AdminGeofences() {
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button
+                            onClick={() => handleVisualEdit(geofence)}
+                            className="rounded px-3 py-1 text-xs font-medium text-[color:var(--accent-success)] hover:bg-[color:var(--accent-success)]/10 transition"
+                          >
+                            Edit Shape
+                          </button>
+                          <button
                             onClick={() => handleEdit(geofence)}
                             className="rounded px-3 py-1 text-xs font-medium text-[color:var(--accent-primary)] hover:bg-[color:var(--accent-primary)]/10 transition"
                           >
-                            Edit
+                            Edit Info
                           </button>
                           <button
                             onClick={() => handleDelete(geofence.id)}
@@ -304,6 +347,15 @@ export default function AdminGeofences() {
               </div>
             )}
           </div>
+        )}
+
+        {/* Visual Map Editor */}
+        {visualEditingGeofence && (
+          <GeofenceMapEditor
+            points={visualEditingGeofence.polygon.points}
+            onChange={handleSaveVisualEdit}
+            onClose={() => setVisualEditingGeofence(null)}
+          />
         )}
 
         {/* Edit Modal */}

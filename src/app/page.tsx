@@ -11,6 +11,7 @@ import { SightingSchema } from "@/contracts/sighting";
 import type { SightingCard } from "@/data/mock-sightings";
 import { categoryLabelById, typeLabelById } from "@/data/taxonomy";
 import { EVENTS, dispatchEvent } from "@/shared/events";
+import { getCookie, setCookie } from "@/shared/client-cookies";
 import type { z } from "zod";
 
 type View = "signals" | "sightings" | "report" | "geofences" | null;
@@ -42,6 +43,8 @@ const toCard = (sighting: z.infer<typeof SightingSchema>): SightingCard => ({
   observedAtLabel: formatRelativeTime(sighting.observedAt),
   location: sighting.location,
   reactions: [],
+  score: sighting.score,
+  hotScore: sighting.hotScore,
 });
 
 export default function Home() {
@@ -90,16 +93,15 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Check if user has dismissed the welcome wizard
-    const hasSeenWelcome = localStorage.getItem(
-      "sightsignal-welcome-dismissed"
-    );
+    // Check if user has dismissed the welcome wizard (cookie-based)
+    const hasSeenWelcome = getCookie("sightsignal-welcome-dismissed");
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setShowWelcome(!hasSeenWelcome);
   }, []);
 
   const dismissWelcome = () => {
-    localStorage.setItem("sightsignal-welcome-dismissed", "true");
+    // Set cookie that expires in 1 year (365 days)
+    setCookie("sightsignal-welcome-dismissed", "true", { maxAge: 365 });
     setShowWelcome(false);
   };
 

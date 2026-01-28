@@ -12,6 +12,9 @@ export type SightingFilters = {
   categoryIds?: CategoryId[];
   status?: SightingStatus;
   bounds?: Polygon;
+  limit?: number;
+  offset?: number;
+  minHotScore?: number;
 };
 
 export type SightingRepository = {

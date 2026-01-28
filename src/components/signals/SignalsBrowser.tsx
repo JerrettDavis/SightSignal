@@ -19,6 +19,12 @@ export function SignalsBrowser() {
         if (response.ok) {
           const data = await response.json();
           dispatchEvent(EVENTS.geofenceSelected, data.data);
+        } else if (response.status === 404) {
+          console.warn(
+            `Geofence ${signal.target.geofenceId} not found - this may be seed data`
+          );
+        } else {
+          console.error(`Failed to fetch geofence: ${response.status}`);
         }
       } catch (error) {
         console.error("Failed to fetch geofence:", error);
