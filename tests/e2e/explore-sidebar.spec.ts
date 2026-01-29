@@ -37,7 +37,10 @@ test.describe("Explore Sidebar", () => {
 
   test("filters signals by category", async ({ page }) => {
     // Get initial count
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const initialCount = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (initialCount === 0) {
@@ -58,7 +61,10 @@ test.describe("Explore Sidebar", () => {
     );
 
     // Verify count changed or stayed the same (depends on data)
-    const newCountText = await page.locator("text=/\\d+ found/").textContent();
+    const newCountText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const newCount = parseInt(newCountText?.match(/\d+/)?.[0] || "0");
 
     // Count should be less than or equal to initial
@@ -66,7 +72,10 @@ test.describe("Explore Sidebar", () => {
   });
 
   test("filters signals by multiple categories", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const initialCount = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (initialCount === 0) {
@@ -76,13 +85,17 @@ test.describe("Explore Sidebar", () => {
 
     // Select Nature
     await page.getByRole("button", { name: "Nature", exact: true }).click();
-    const afterNature = await page.locator("text=/\\d+ found/").textContent();
+    const afterNature = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const countAfterNature = parseInt(afterNature?.match(/\d+/)?.[0] || "0");
 
     // Select Community
     await page.getByRole("button", { name: "Community", exact: true }).click();
     const afterCommunity = await page
       .locator("text=/\\d+ found/")
+      .first()
       .textContent();
     const countAfterCommunity = parseInt(
       afterCommunity?.match(/\d+/)?.[0] || "0"
@@ -115,7 +128,10 @@ test.describe("Explore Sidebar", () => {
   });
 
   test("filters signals by importance level", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const initialCount = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (initialCount === 0) {
@@ -133,13 +149,19 @@ test.describe("Explore Sidebar", () => {
     await page.waitForTimeout(100);
 
     // Count should be less than or equal to initial
-    const newCountText = await page.locator("text=/\\d+ found/").textContent();
+    const newCountText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const newCount = parseInt(newCountText?.match(/\d+/)?.[0] || "0");
     expect(newCount).toBeLessThanOrEqual(initialCount);
   });
 
   test("combines category and importance filters", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const initialCount = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (initialCount === 0) {
@@ -159,13 +181,19 @@ test.describe("Explore Sidebar", () => {
     await page.waitForTimeout(100);
 
     // Combined filter should show subset
-    const newCountText = await page.locator("text=/\\d+ found/").textContent();
+    const newCountText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const newCount = parseInt(newCountText?.match(/\d+/)?.[0] || "0");
     expect(newCount).toBeLessThanOrEqual(initialCount);
   });
 
   test("clears all filters", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const initialCount = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (initialCount === 0) {
@@ -196,7 +224,10 @@ test.describe("Explore Sidebar", () => {
   });
 
   test("displays signal cards with correct information", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const count = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (count === 0) {
@@ -220,7 +251,10 @@ test.describe("Explore Sidebar", () => {
   });
 
   test("limits signals to 15 maximum", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const count = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     // Count shown should never exceed 15
@@ -228,7 +262,10 @@ test.describe("Explore Sidebar", () => {
   });
 
   test("displays importance indicators on signal cards", async ({ page }) => {
-    const countText = await page.locator("text=/\\d+ found/").textContent();
+    const countText = await page
+      .locator("text=/\\d+ found/")
+      .first()
+      .textContent();
     const count = parseInt(countText?.match(/\d+/)?.[0] || "0");
 
     if (count === 0) {
