@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main, develop]
 
-# Cancel in-progress runs when a new run is triggered
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -16,7 +15,6 @@ env:
   POSTGRES_IMAGE: postgres:16-alpine
 
 jobs:
-  # Lint and Type Check
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
@@ -39,7 +37,6 @@ jobs:
       - name: Run type check
         run: npm run typecheck
 
-  # Unit Tests with Coverage
   unit-tests:
     name: Unit Tests with Coverage
     runs-on: ubuntu-latest
@@ -59,30 +56,6 @@ jobs:
       - name: Run unit tests with coverage
         run: npm run test:coverage
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/coverage-final.json
-          flags: unit
-          name: unit-tests
-          fail_ci_if_error: false
-
-      - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 30
-
-      - name: Generate coverage summary
-        run: |
-          echo "## Unit Test Coverage" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          cat coverage/coverage-summary.txt || echo "No summary available"
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
-  # E2E Tests with File Storage
   e2e-file:
     name: E2E Tests (File Storage)
     runs-on: ubuntu-latest
@@ -119,11 +92,10 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  # E2E Tests with PostgreSQL
   e2e-postgres:
     name: E2E Tests (PostgreSQL)
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: ${{ env.POSTGRES_IMAGE }}
@@ -185,7 +157,6 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-  # Build Test
   build:
     name: Build Application
     runs-on: ubuntu-latest
@@ -217,7 +188,6 @@ jobs:
           path: .next/
           retention-days: 7
 
-  # Security Audit
   security:
     name: Security Audit
     runs-on: ubuntu-latest
@@ -235,7 +205,6 @@ jobs:
         run: npm audit --audit-level=moderate
         continue-on-error: true
 
-  # Test Summary
   test-summary:
     name: Test Summary
     runs-on: ubuntu-latest
