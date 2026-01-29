@@ -6,9 +6,15 @@ test.describe("Geofences Sidebar", () => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // Open Geofences sidebar
+    // First open Explore dropdown menu
+    await page.getByRole("button", { name: "Explore", exact: true }).click();
+    await page.waitForTimeout(100);
+
+    // Then click Geofences in the dropdown
     await page.getByRole("button", { name: "Geofences", exact: true }).click();
-    await page.waitForTimeout(300); // Wait for animation
+
+    // Wait for sidebar animation and dynamically loaded content
+    await page.waitForTimeout(2000);
   });
 
   test("displays geofence map", async ({ page }) => {
