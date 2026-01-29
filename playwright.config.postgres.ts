@@ -14,6 +14,7 @@ export default defineConfig({
   use: {
     baseURL: baseUrl,
     trace: "on-first-retry",
+    viewport: { width: 1920, height: 1080 }, // Larger viewport to prevent overflow issues
   },
   workers: process.env.CI ? 4 : 1, // Use 4 workers for better parallelization
   fullyParallel: true, // Run tests in parallel within files

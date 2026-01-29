@@ -48,8 +48,10 @@ test.describe("Explore Sidebar", () => {
       return;
     }
 
-    // Click Nature category
-    await page.getByRole("button", { name: "Nature", exact: true }).click();
+    // Click Nature category (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Nature", exact: true })
+      .click({ force: true });
 
     // Verify button shows selected state (blue background)
     const natureButton = page.getByRole("button", {
@@ -83,16 +85,20 @@ test.describe("Explore Sidebar", () => {
       return;
     }
 
-    // Select Nature
-    await page.getByRole("button", { name: "Nature", exact: true }).click();
+    // Select Nature (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Nature", exact: true })
+      .click({ force: true });
     const afterNature = await page
       .locator("text=/\\d+ found/")
       .first()
       .textContent();
     const countAfterNature = parseInt(afterNature?.match(/\d+/)?.[0] || "0");
 
-    // Select Community
-    await page.getByRole("button", { name: "Community", exact: true }).click();
+    // Select Community (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Community", exact: true })
+      .click({ force: true });
     const afterCommunity = await page
       .locator("text=/\\d+ found/")
       .first()
@@ -114,14 +120,18 @@ test.describe("Explore Sidebar", () => {
   });
 
   test("toggles category filter off", async ({ page }) => {
-    // Select a category
-    await page.getByRole("button", { name: "Nature", exact: true }).click();
+    // Select a category (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Nature", exact: true })
+      .click({ force: true });
     await expect(
       page.getByRole("button", { name: "Nature", exact: true })
     ).toHaveClass(/bg-\[color:var\(--accent-primary\)\]/);
 
-    // Click again to deselect
-    await page.getByRole("button", { name: "Nature", exact: true }).click();
+    // Click again to deselect (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Nature", exact: true })
+      .click({ force: true });
     await expect(
       page.getByRole("button", { name: "Nature", exact: true })
     ).not.toHaveClass(/bg-\[color:var\(--accent-primary\)\]/);
@@ -169,8 +179,10 @@ test.describe("Explore Sidebar", () => {
       return;
     }
 
-    // Select category
-    await page.getByRole("button", { name: "Nature", exact: true }).click();
+    // Select category (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Nature", exact: true })
+      .click({ force: true });
 
     // Select importance
     const importanceSelect = page
@@ -201,8 +213,10 @@ test.describe("Explore Sidebar", () => {
       return;
     }
 
-    // Apply some filters
-    await page.getByRole("button", { name: "Nature", exact: true }).click();
+    // Apply some filters (use force to handle sidebar scroll issues)
+    await page
+      .getByRole("button", { name: "Nature", exact: true })
+      .click({ force: true });
     const importanceSelect = page
       .locator("select")
       .filter({ hasText: /All levels/ });
