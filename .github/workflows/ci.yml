@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main, develop]
 
-# Cancel in-progress runs when a new run is triggered
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -16,7 +15,6 @@ env:
   POSTGRES_IMAGE: postgres:16-alpine
 
 jobs:
-  # Lint and Type Check
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
@@ -123,7 +121,7 @@ jobs:
   e2e-postgres:
     name: E2E Tests (PostgreSQL)
     runs-on: ubuntu-latest
-    
+
     services:
       postgres:
         image: ${{ env.POSTGRES_IMAGE }}
