@@ -1,5 +1,6 @@
 name: CI/CD Pipeline
 
+# Complete CI/CD pipeline with 7 jobs
 on:
   push:
     branches: [main, develop]
