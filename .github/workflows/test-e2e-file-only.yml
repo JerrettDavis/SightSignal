@@ -1,0 +1,45 @@
+name: Test E2E File Only
+
+on:
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  e2e-file:
+    name: E2E Tests (File Storage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests (file storage)
+        run: npm run e2e
+        env:
+          CI: true
+          SIGHTSIGNAL_DATA_STORE: file
+          ADMIN_AUTH_ENABLED: true
+          ADMIN_JWT_SECRET: test-secret-for-ci-testing-only-minimum-32-characters-required
+          ADMIN_USERS: admin:$2b$10$3ucZ/lmCdbbQNyxmXgDv2uBIXueZcUdtKpJVYkd5NvVdZyZVyRl3C
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-file
+          path: playwright-report/
+          retention-days: 30
