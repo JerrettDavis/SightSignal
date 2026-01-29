@@ -102,7 +102,7 @@ export const buildEvaluateSignalForSighting = ({
         geoMatch = isPointInPolygon(sighting.location, signal.target.polygon);
       } else if (signal.target.kind === "geofence") {
         const geofence = await geofenceRepository.getById(
-          signal.target.geofenceId as any
+          signal.target.geofenceId
         );
         if (geofence) {
           geoMatch = isPointInPolygon(sighting.location, geofence.polygon);

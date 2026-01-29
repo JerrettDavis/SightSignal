@@ -263,7 +263,7 @@ test.describe("Integration Workflow", () => {
     await page.getByTestId("report-lat").fill("37.8042");
     await page.getByTestId("report-lng").fill("-122.4087");
 
-    let response1 = page.waitForResponse(
+    const response1 = page.waitForResponse(
       (response) =>
         response.url().includes("/api/sightings") &&
         response.request().method() === "POST"
@@ -278,7 +278,7 @@ test.describe("Integration Workflow", () => {
     await page.getByTestId("report-lat").fill("37.7749");
     await page.getByTestId("report-lng").fill("-122.4194");
 
-    let response2 = page.waitForResponse(
+    const response2 = page.waitForResponse(
       (response) =>
         response.url().includes("/api/sightings") &&
         response.request().method() === "POST"
