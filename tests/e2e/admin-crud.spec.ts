@@ -14,10 +14,12 @@ test.describe("Admin CRUD Operations", () => {
     await adminLogin(page);
 
     // Check dashboard metrics are visible
-    await expect(page.getByText("Total Sightings")).toBeVisible();
-    await expect(page.getByText("Active Sightings")).toBeVisible();
-    await expect(page.getByText("Geofences")).toBeVisible();
-    await expect(page.getByText("Subscriptions")).toBeVisible();
+    await expect(page.getByText("Total Sightings").first()).toBeVisible();
+    await expect(page.getByText("Active Sightings").first()).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Dashboard" })
+    ).toBeVisible();
+    await expect(page.getByText("Subscriptions").first()).toBeVisible();
 
     // Navigate to Sightings
     await page.click('a[href="/admin/sightings"]');

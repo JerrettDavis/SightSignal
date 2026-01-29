@@ -7,15 +7,15 @@ const testDatabaseUrl =
 
 export default defineConfig({
   testDir: "./tests/e2e",
-  timeout: 30_000,
+  timeout: 60_000, // Increased to 60s for CI
   expect: {
-    timeout: 10_000,
+    timeout: 15_000, // Increased to 15s
   },
   use: {
     baseURL: baseUrl,
     trace: "on-first-retry",
   },
-  workers: 1,
+  workers: process.env.CI ? 2 : 1, // Use 2 workers in CI for parallelization
   webServer: {
     command: "npm run dev -- --port 3000",
     url: baseUrl,

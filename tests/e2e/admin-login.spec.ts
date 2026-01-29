@@ -27,7 +27,9 @@ test.describe("Admin Login", () => {
 
     // Verify we're on the dashboard
     await expect(page.getByText("SightSignal Admin")).toBeVisible();
-    await expect(page.getByText("Dashboard")).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Dashboard" })
+    ).toBeVisible();
   });
 
   test("should show error with incorrect credentials", async ({ page }) => {
