@@ -229,9 +229,9 @@ jobs:
              [ "${{ needs.e2e-postgres.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "❌ Some checks failed!" >> $GITHUB_STEP_SUMMARY
+            echo "[FAILED] Some checks failed!" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "✅ All checks passed!" >> $GITHUB_STEP_SUMMARY
+            echo "[SUCCESS] All checks passed!" >> $GITHUB_STEP_SUMMARY
           fi
