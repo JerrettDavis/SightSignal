@@ -232,9 +232,9 @@ test.describe("Explore Sidebar", () => {
     // Clear filters button should appear if count is 0
     const clearButton = page.getByRole("button", { name: "Clear filters" });
 
-    // Click clear if it exists
+    // Click clear if it exists (use JS click to handle sidebar scroll container)
     if (await clearButton.isVisible()) {
-      await clearButton.click();
+      await clearButton.evaluate((el) => (el as HTMLElement).click());
 
       // Verify filters are reset
       await expect(

@@ -5,7 +5,7 @@ test.describe("Geofence Map Editor", () => {
   async function loginAsAdmin(page: Page) {
     await page.goto("/admin/login");
     await page.fill('input[name="username"]', "admin");
-    await page.fill('input[name="password"]', "@JDAdminPass!0293");
+    await page.fill('input[name="password"]', "Password!");
     await page.click('button[type="submit"]');
     await expect(page).toHaveURL("/admin", { timeout: 10000 });
   }
