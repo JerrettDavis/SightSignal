@@ -1,0 +1,9 @@
+# GitHub Actions workflows must use LF line endings
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Shell scripts must use LF
+*.sh text eol=lf
+
+# Default behavior for other files
+* text=auto
