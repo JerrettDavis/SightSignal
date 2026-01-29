@@ -360,11 +360,11 @@ describe("signal-evaluator", () => {
   describe("evaluateSighting", () => {
     it("should return matching signals", () => {
       const signal1 = createTestSignal({
-        id: "signal-1" as SightingId,
+        id: "signal-1" as SignalId,
         conditions: { categoryIds: ["cat-law-enforcement"] },
       });
       const signal2 = createTestSignal({
-        id: "signal-2" as SightingId,
+        id: "signal-2" as SignalId,
         conditions: { categoryIds: ["cat-wildlife"] },
       });
 
@@ -549,15 +549,15 @@ describe("signal-evaluator", () => {
   describe("findScoreThresholdSignals", () => {
     it("should return signals with score_threshold trigger", () => {
       const signal1 = createTestSignal({
-        id: "signal-1" as SightingId,
+        id: "signal-1" as SignalId,
         triggers: ["new_sighting", "score_threshold"],
       });
       const signal2 = createTestSignal({
-        id: "signal-2" as SightingId,
+        id: "signal-2" as SignalId,
         triggers: ["new_sighting"],
       });
       const signal3 = createTestSignal({
-        id: "signal-3" as SightingId,
+        id: "signal-3" as SignalId,
         triggers: ["score_threshold"],
       });
 
@@ -750,7 +750,7 @@ describe("signal-evaluator", () => {
     it("should build context from repository data", () => {
       const geofence = createTestGeofence("geofence-1");
       const sightingType: SightingType = {
-        id: "type-1" as SightingId,
+        id: "type-1" as SightingTypeId,
         label: "Test Type",
         categoryId: "cat-1" as CategoryId,
         tags: ["test"],

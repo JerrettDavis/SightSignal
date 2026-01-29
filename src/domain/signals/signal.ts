@@ -1,4 +1,5 @@
 import { validatePolygon, type Polygon } from "@/domain/geo/geo";
+import { type GeofenceId } from "@/domain/geofences/geofence";
 import { type ReputationTier } from "@/domain/reputation/reputation";
 import { type SightingImportance } from "@/domain/sightings/sighting";
 import { err, ok, type DomainError, type Result } from "@/shared/result";
@@ -15,7 +16,7 @@ export type TriggerType =
 
 // Geographic targeting options
 export type SignalTarget =
-  | { kind: "geofence"; geofenceId: string }
+  | { kind: "geofence"; geofenceId: GeofenceId }
   | { kind: "polygon"; polygon: Polygon }
   | { kind: "global" }; // No geographic restriction
 
