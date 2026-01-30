@@ -270,14 +270,6 @@ export default function Home() {
               <span>Geofences</span>
             </button>
           </div>
-
-          {/* Report Button */}
-          <button
-            onClick={() => openView("report")}
-            className="hidden md:flex rounded-lg px-4 py-2 text-sm font-medium bg-[color:var(--accent-primary)] text-white hover:bg-[color:var(--accent-hover)] transition shadow-sm"
-          >
-            Report
-          </button>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -344,7 +336,7 @@ export default function Home() {
         <aside
           className={`
             fixed md:relative
-            left-0 top-0 bottom-0
+            left-0 top-[60px] md:top-auto bottom-0 md:bottom-auto
             w-full sm:w-96
             md:w-96
             border-r border-[color:var(--border)]
@@ -579,6 +571,29 @@ export default function Home() {
               </div>
             </div>
           )}
+
+          {/* FAB - Create Signal */}
+          <button
+            onClick={() => openView("report")}
+            className="absolute bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--accent-primary)] text-white shadow-[var(--shadow-lg)] hover:bg-[color:var(--accent-hover)] transition-all hover:scale-105 active:scale-95 z-20"
+            title="Create new signal"
+            aria-label="Create new signal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 5v14" />
+              <path d="M5 12h14" />
+            </svg>
+          </button>
         </div>
       </main>
     </div>
