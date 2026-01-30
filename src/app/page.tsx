@@ -438,7 +438,7 @@ export default function Home() {
                 </div>
 
                 {/* Sightings List - Scrollable */}
-                <div className="p-4">
+                <div className="p-4 pb-8">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-xs font-medium text-[color:var(--text-secondary)]">
                       Nearby Signals
@@ -513,14 +513,14 @@ export default function Home() {
 
             {/* Report View */}
             {activeView === "report" && (
-              <div className="p-4 sm:p-6">
+              <div className="p-4 sm:p-6 pb-8">
                 <ReportForm />
               </div>
             )}
 
             {/* Geofences View */}
             {activeView === "geofences" && (
-              <div className="p-4 sm:p-6">
+              <div className="p-4 sm:p-6 pb-8">
                 <ClientGeofenceStudio />
               </div>
             )}

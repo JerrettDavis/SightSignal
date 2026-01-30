@@ -156,7 +156,7 @@ export function SignalsBrowser() {
       </div>
 
       {/* Signals List - Scrollable */}
-      <div className="p-4 flex-1 overflow-y-auto">
+      <div className="p-4 pb-8 flex-1 overflow-y-auto">
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-medium text-[color:var(--text-secondary)]">
             My Signals
