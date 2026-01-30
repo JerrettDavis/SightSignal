@@ -148,6 +148,29 @@ export default function Home() {
       {/* Top Bar */}
       <header className="flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-elevated)] px-4 py-3 shadow-[var(--shadow-sm)] z-30 flex-shrink-0">
         <div className="flex items-center gap-3">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="md:hidden flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
+            aria-label="Open menu"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 12h18" />
+              <path d="M3 6h18" />
+              <path d="M3 18h18" />
+            </svg>
+          </button>
+
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--accent-primary)] text-sm font-bold text-white">
             SS
           </div>
@@ -513,29 +536,6 @@ export default function Home() {
         {/* Map Area */}
         <div className="relative flex-1 overflow-hidden">
           <ClientSightingsExplorer />
-
-          {/* Mobile Sidebar Toggle Button */}
-          <button
-            onClick={() => setMobileSidebarOpen(true)}
-            className="md:hidden fixed bottom-6 left-6 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--accent-primary)] text-white shadow-[var(--shadow-lg)] hover:bg-[color:var(--accent-hover)] transition z-20"
-            aria-label="Open sidebar"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M3 12h18" />
-              <path d="M3 6h18" />
-              <path d="M3 18h18" />
-            </svg>
-          </button>
 
           {/* Welcome Card - Dismissable wizard */}
           {showWelcome && (
