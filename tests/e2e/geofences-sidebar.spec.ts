@@ -1,13 +1,20 @@
 import { test, expect } from "@playwright/test";
+import { clickSidebarButton } from "./helpers/sidebar";
 
 test.describe("Geofences Sidebar", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
-    // Open Geofences sidebar
+    // First open Explore dropdown menu
+    await page.getByRole("button", { name: "Explore", exact: true }).click();
+    await page.waitForTimeout(100);
+
+    // Then click Geofences in the dropdown
     await page.getByRole("button", { name: "Geofences", exact: true }).click();
-    await page.waitForTimeout(300); // Wait for animation
+
+    // Wait for sidebar animation and dynamically loaded content
+    await page.waitForTimeout(2000);
   });
 
   test("displays geofence map", async ({ page }) => {
@@ -74,20 +81,22 @@ test.describe("Geofences Sidebar", () => {
     // Initially should be 0 points
     await expect(page.getByText("Points: 0")).toBeVisible();
 
-    // Click sample button
-    await page.getByTestId("sample-geofence-button").click();
+    // Click sample button (use helper for sidebar scroll container)
+    await clickSidebarButton(page.getByTestId("sample-geofence-button"));
 
     // Should now show 4 points (sample polygon has 4 corners)
     await expect(page.getByText("Points: 4")).toBeVisible();
   });
 
   test("clears polygon points", async ({ page }) => {
-    // Add sample polygon
-    await page.getByTestId("sample-geofence-button").click();
+    // Add sample polygon (use helper for sidebar scroll container)
+    await clickSidebarButton(page.getByTestId("sample-geofence-button"));
     await expect(page.getByText("Points: 4")).toBeVisible();
 
-    // Clear points
-    await page.getByRole("button", { name: "Clear points" }).click();
+    // Clear points (use helper for sidebar scroll container)
+    await clickSidebarButton(
+      page.getByRole("button", { name: "Clear points" })
+    );
 
     // Should be back to 0
     await expect(page.getByText("Points: 0")).toBeVisible();
@@ -97,16 +106,16 @@ test.describe("Geofences Sidebar", () => {
     // Button should be disabled with 0 points
     await expect(page.getByTestId("create-geofence-button")).toBeDisabled();
 
-    // Add sample polygon
-    await page.getByTestId("sample-geofence-button").click();
+    // Add sample polygon (use helper for sidebar scroll container)
+    await clickSidebarButton(page.getByTestId("sample-geofence-button"));
 
     // Button should now be enabled
     await expect(page.getByTestId("create-geofence-button")).toBeEnabled();
   });
 
   test("creates a geofence successfully", async ({ page }) => {
-    // Add sample polygon
-    await page.getByTestId("sample-geofence-button").click();
+    // Add sample polygon (use helper for sidebar scroll container)
+    await clickSidebarButton(page.getByTestId("sample-geofence-button"));
 
     // Fill name
     const nameInput = page.getByRole("textbox", { name: "Name" });
@@ -126,7 +135,7 @@ test.describe("Geofences Sidebar", () => {
     );
 
     // Create geofence
-    await page.getByTestId("create-geofence-button").click();
+    await clickSidebarButton(page.getByTestId("create-geofence-button"));
     const response = await responsePromise;
 
     // Verify success
@@ -165,7 +174,7 @@ test.describe("Geofences Sidebar", () => {
         response.request().method() === "POST"
     );
 
-    await page.getByTestId("create-geofence-button").click();
+    await clickSidebarButton(page.getByTestId("create-geofence-button"));
     await responsePromise;
     await expect(page.getByText("Geofence saved successfully")).toBeVisible();
 
@@ -192,16 +201,16 @@ test.describe("Geofences Sidebar", () => {
     // Still disabled without target polygon
     await expect(page.getByTestId("subscribe-button")).toBeDisabled();
 
-    // Add sample polygon
-    await page.getByTestId("sample-geofence-button").click();
+    // Add sample polygon (use helper for sidebar scroll container)
+    await clickSidebarButton(page.getByTestId("sample-geofence-button"));
 
     // Now should be enabled
     await expect(page.getByTestId("subscribe-button")).toBeEnabled();
   });
 
   test("subscribes to drawn polygon successfully", async ({ page }) => {
-    // Add sample polygon
-    await page.getByTestId("sample-geofence-button").click();
+    // Add sample polygon (use helper for sidebar scroll container)
+    await clickSidebarButton(page.getByTestId("sample-geofence-button"));
 
     // Fill email
     await page.getByTestId("subscription-email").fill("test-e2e@example.com");
@@ -225,7 +234,7 @@ test.describe("Geofences Sidebar", () => {
     );
 
     // Subscribe
-    await page.getByTestId("subscribe-button").click();
+    await clickSidebarButton(page.getByTestId("subscribe-button"));
     const response = await responsePromise;
 
     // Verify success
@@ -251,7 +260,7 @@ test.describe("Geofences Sidebar", () => {
         response.request().method() === "POST"
     );
 
-    await page.getByTestId("create-geofence-button").click();
+    await clickSidebarButton(page.getByTestId("create-geofence-button"));
     await geofenceResponse;
     await expect(page.getByText("Geofence saved successfully")).toBeVisible();
 
@@ -270,7 +279,7 @@ test.describe("Geofences Sidebar", () => {
         response.request().method() === "POST"
     );
 
-    await page.getByTestId("subscribe-button").click();
+    await clickSidebarButton(page.getByTestId("subscribe-button"));
     const response = await subscriptionResponse;
 
     expect(response.ok()).toBe(true);

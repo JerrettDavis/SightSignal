@@ -6,7 +6,17 @@ test.describe("Geofence Map Editor", () => {
     await page.goto("/admin/login");
     await page.fill('input[name="username"]', "admin");
     await page.fill('input[name="password"]', "Password!");
+
+    // Wait for login API response
+    const loginResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/admin/auth/login") &&
+        response.request().method() === "POST"
+    );
+
     await page.click('button[type="submit"]');
+    await loginResponse;
+
     await expect(page).toHaveURL("/admin", { timeout: 10000 });
   }
 

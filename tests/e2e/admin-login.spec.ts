@@ -19,8 +19,27 @@ test.describe("Admin Login", () => {
     await page.fill('input[name="username"]', "admin");
     await page.fill('input[name="password"]', "Password!");
 
+    // Wait for login API response
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/admin/auth/login") &&
+        response.request().method() === "POST"
+    );
+
     // Submit form
     await page.click('button[type="submit"]');
+
+    // Wait for response
+    const response = await responsePromise;
+
+    // Log response for debugging
+    if (!response.ok()) {
+      const body = await response.text();
+      console.log("Login failed with status:", response.status());
+      console.log("Response body:", body);
+    }
+
+    expect(response.ok()).toBe(true);
 
     // Should redirect to admin dashboard
     await expect(page).toHaveURL("/admin", { timeout: 10000 });
@@ -54,10 +73,19 @@ test.describe("Admin Login", () => {
     await page.goto("/admin/login");
     await page.fill('input[name="username"]', "admin");
     await page.fill('input[name="password"]', "Password!");
+
+    // Wait for login API response
+    const loginResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/admin/auth/login") &&
+        response.request().method() === "POST"
+    );
+
     await page.click('button[type="submit"]');
+    await loginResponse;
 
     // Wait for redirect to dashboard
-    await expect(page).toHaveURL("/admin");
+    await expect(page).toHaveURL("/admin", { timeout: 10000 });
 
     // Click logout button
     await page.click('button:has-text("Logout")');
@@ -73,8 +101,18 @@ test.describe("Admin Login", () => {
     await page.goto("/admin/login");
     await page.fill('input[name="username"]', "admin");
     await page.fill('input[name="password"]', "Password!");
+
+    // Wait for login API response
+    const loginResponse = page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/admin/auth/login") &&
+        response.request().method() === "POST"
+    );
+
     await page.click('button[type="submit"]');
-    await expect(page).toHaveURL("/admin");
+    await loginResponse;
+
+    await expect(page).toHaveURL("/admin", { timeout: 10000 });
 
     // Navigate to main app
     await page.goto("/");

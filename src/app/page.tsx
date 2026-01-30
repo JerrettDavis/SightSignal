@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { Sidebar } from "@/components/ui/Sidebar";
 import { ReportForm } from "@/components/report-form";
 import { ClientGeofenceStudio } from "@/components/client-geofence-studio";
 import { ClientSightingsExplorer } from "@/components/client-sightings-explorer";
@@ -48,13 +47,13 @@ const toCard = (sighting: z.infer<typeof SightingSchema>): SightingCard => ({
 });
 
 export default function Home() {
-  const [activeView, setActiveView] = useState<View>(null);
+  const [activeView, setActiveView] = useState<View>("sightings");
   const [sightings, setSightings] = useState<SightingCard[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [importanceFilter, setImportanceFilter] = useState<string>("all");
   const [isAdmin, setIsAdmin] = useState(false);
-  const [exploreMenuOpen, setExploreMenuOpen] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const loadSightings = useCallback(async () => {
     try {
@@ -111,10 +110,11 @@ export default function Home() {
 
   const openView = (view: View) => {
     setActiveView(view);
+    setMobileSidebarOpen(true); // Open sidebar on mobile when switching views
   };
 
-  const closeView = () => {
-    setActiveView(null);
+  const closeMobileSidebar = () => {
+    setMobileSidebarOpen(false);
   };
 
   const toggleCategory = (category: string) => {
@@ -141,12 +141,12 @@ export default function Home() {
       }
       return sighting.status === "active";
     })
-    .slice(0, 15);
+    .slice(0, 100); // Show top 100 sightings
 
   return (
     <div className="fixed inset-0 flex flex-col bg-[color:var(--background)]">
       {/* Top Bar */}
-      <header className="flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-elevated)] px-4 py-3 shadow-[var(--shadow-sm)] z-30">
+      <header className="flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-elevated)] px-4 py-3 shadow-[var(--shadow-sm)] z-30 flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--accent-primary)] text-sm font-bold text-white">
             SS
@@ -161,68 +161,97 @@ export default function Home() {
           </div>
         </div>
 
-        <nav className="hidden md:flex items-center gap-2">
-          {/* Explore Dropdown */}
-          <div className="relative">
+        <nav className="flex items-center gap-3">
+          {/* Desktop: Full Navigation with Icons */}
+          <div className="hidden md:flex items-center gap-1 px-2 py-1 rounded-lg bg-[color:var(--surface)] border border-[color:var(--border)]">
+            {/* Signals Button */}
             <button
-              onClick={() => setExploreMenuOpen(!exploreMenuOpen)}
-              onBlur={() => setTimeout(() => setExploreMenuOpen(false), 200)}
-              className="rounded-lg px-4 py-2 text-sm font-medium text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition flex items-center gap-1"
+              onClick={() => openView("signals")}
+              className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                activeView === "signals"
+                  ? "bg-[color:var(--surface-elevated)] text-[color:var(--text-primary)]"
+                  : "text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)]"
+              }`}
+              title="Browse Signals"
             >
-              Explore
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className={`transition-transform ${exploreMenuOpen ? "rotate-180" : ""}`}
               >
-                <path d="m6 9 6 6 6-6" />
+                <path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8" />
+                <path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                <path d="M12 4v6" />
+                <path d="M2 18h20" />
               </svg>
+              <span>Signals</span>
             </button>
 
-            {exploreMenuOpen && (
-              <div className="absolute top-full left-0 mt-1 w-48 rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-elevated)] shadow-[var(--shadow-lg)] py-1 z-50">
-                <button
-                  onClick={() => {
-                    openView("signals");
-                    setExploreMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
-                >
-                  Signals
-                </button>
-                <button
-                  onClick={() => {
-                    openView("sightings");
-                    setExploreMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
-                >
-                  Sightings
-                </button>
-                <button
-                  onClick={() => {
-                    openView("geofences");
-                    setExploreMenuOpen(false);
-                  }}
-                  className="w-full text-left px-4 py-2 text-sm text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
-                >
-                  Geofences
-                </button>
-              </div>
-            )}
+            {/* Sightings Button */}
+            <button
+              onClick={() => openView("sightings")}
+              className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                activeView === "sightings"
+                  ? "bg-[color:var(--surface-elevated)] text-[color:var(--text-primary)]"
+                  : "text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)]"
+              }`}
+              title="Browse Sightings"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              <span>Sightings</span>
+            </button>
+
+            {/* Geofences Button */}
+            <button
+              onClick={() => openView("geofences")}
+              className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition ${
+                activeView === "geofences"
+                  ? "bg-[color:var(--surface-elevated)] text-[color:var(--text-primary)]"
+                  : "text-[color:var(--text-primary)] hover:bg-[color:var(--surface-elevated)]"
+              }`}
+              title="Manage Geofences"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              <span>Geofences</span>
+            </button>
           </div>
 
           {/* Report Button */}
           <button
             onClick={() => openView("report")}
-            className="rounded-lg px-4 py-2 text-sm font-medium bg-[color:var(--accent-primary)] text-white hover:bg-[color:var(--accent-hover)] transition shadow-sm"
+            className="hidden md:flex rounded-lg px-4 py-2 text-sm font-medium bg-[color:var(--accent-primary)] text-white hover:bg-[color:var(--accent-hover)] transition shadow-sm"
           >
             Report
           </button>
@@ -277,240 +306,281 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Map Area */}
-      <main className="relative flex-1 overflow-hidden">
-        <ClientSightingsExplorer />
+      {/* Main Content - Map + Fixed Sidebar */}
+      <main className="flex flex-1 overflow-hidden">
+        {/* Map Area */}
+        <div className="relative flex-1 overflow-hidden">
+          <ClientSightingsExplorer />
 
-        {/* Floating Action Button */}
-        <button
-          onClick={() => openView("report")}
-          className="fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--accent-primary)] text-white shadow-[var(--shadow-lg)] hover:bg-[color:var(--accent-hover)] transition z-20 md:hidden"
-          aria-label="Report a signal"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          {/* Mobile Sidebar Toggle Button */}
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="md:hidden fixed bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--accent-primary)] text-white shadow-[var(--shadow-lg)] hover:bg-[color:var(--accent-hover)] transition z-20"
+            aria-label="Open sidebar"
           >
-            <path d="M12 5v14" />
-            <path d="M5 12h14" />
-          </svg>
-        </button>
-
-        {/* Welcome Card - Dismissable wizard */}
-        {showWelcome && (
-          <div className="absolute left-4 top-4 max-w-sm rounded-xl bg-[color:var(--surface-elevated)] p-4 shadow-[var(--shadow-md)] z-10 border border-[color:var(--border)]">
-            <div className="flex items-start justify-between gap-2">
-              <h2 className="text-base font-semibold text-[color:var(--text-primary)]">
-                Welcome to SightSignal
-              </h2>
-              <button
-                onClick={dismissWelcome}
-                className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded text-[color:var(--text-tertiary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
-                title="Dismiss"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              </button>
-            </div>
-            <p className="mt-2 text-sm text-[color:var(--text-secondary)]">
-              Share and track local sightings, events, and hazards. Click the
-              map to explore signals or use the menu to report new ones.
-            </p>
-            <div className="mt-3 flex gap-2">
-              <button
-                onClick={() => {
-                  openView("sightings");
-                  dismissWelcome();
-                }}
-                className="rounded-lg bg-[color:var(--accent-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[color:var(--accent-hover)] transition"
-              >
-                Get started
-              </button>
-              <button
-                onClick={dismissWelcome}
-                className="rounded-lg border border-[color:var(--border)] px-4 py-2 text-sm font-medium text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
-              >
-                Maybe later
-              </button>
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* Sidebars */}
-      <Sidebar
-        isOpen={activeView === "signals"}
-        onClose={closeView}
-        title="Signals"
-      >
-        <SignalsBrowser />
-      </Sidebar>
-
-      <Sidebar
-        isOpen={activeView === "sightings"}
-        onClose={closeView}
-        title="Sightings"
-      >
-        {/* Filters Section - Fixed at top */}
-        <div className="border-b border-[color:var(--border)] p-4 space-y-4 bg-[color:var(--surface-elevated)] sticky top-0 z-10">
-          <div>
-            <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
-              Categories
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[
-                "Nature",
-                "Public Safety",
-                "Community",
-                "Hazards",
-                "Infrastructure",
-                "Events",
-              ].map((category) => (
-                <button
-                  key={category}
-                  onClick={() => toggleCategory(category)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-                    selectedCategories.includes(category)
-                      ? "border-[color:var(--accent-primary)] bg-[color:var(--accent-primary)] text-white"
-                      : "border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
-              Importance
-            </label>
-            <select
-              value={importanceFilter}
-              onChange={(e) => setImportanceFilter(e.target.value)}
-              className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--background)] px-3 py-2 text-sm text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-primary)]"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <option value="all">All levels</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="normal">Normal</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
-        </div>
+              <path d="M3 12h18" />
+              <path d="M3 6h18" />
+              <path d="M3 18h18" />
+            </svg>
+          </button>
 
-        {/* Sightings List - Scrollable */}
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-medium text-[color:var(--text-secondary)]">
-              Nearby Signals
-            </h3>
-            <span className="text-xs text-[color:var(--text-tertiary)]">
-              {filteredSightings.length} found
-            </span>
-          </div>
-
-          {filteredSightings.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-sm text-[color:var(--text-secondary)]">
-                No signals match your filters
-              </p>
-              <button
-                onClick={() => {
-                  setSelectedCategories([]);
-                  setImportanceFilter("all");
-                }}
-                className="mt-2 text-xs font-medium text-[color:var(--accent-primary)] hover:underline"
-              >
-                Clear filters
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {filteredSightings.map((sighting) => (
-                <div
-                  key={sighting.id}
-                  onClick={() => {
-                    dispatchEvent(EVENTS.sightingSelected, {
-                      id: sighting.id,
-                      title: sighting.title,
-                      category: sighting.category,
-                      description: sighting.description,
-                      location: sighting.location,
-                    });
-                  }}
-                  className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-3 hover:bg-[color:var(--surface-elevated)] transition cursor-pointer"
+          {/* Welcome Card - Dismissable wizard */}
+          {showWelcome && (
+            <div className="absolute left-4 top-4 max-w-sm rounded-xl bg-[color:var(--surface-elevated)] p-4 shadow-[var(--shadow-md)] z-10 border border-[color:var(--border)]">
+              <div className="flex items-start justify-between gap-2">
+                <h2 className="text-base font-semibold text-[color:var(--text-primary)]">
+                  Welcome to SightSignal
+                </h2>
+                <button
+                  onClick={dismissWelcome}
+                  className="flex-shrink-0 flex h-6 w-6 items-center justify-center rounded text-[color:var(--text-tertiary)] hover:bg-[color:var(--surface)] hover:text-[color:var(--text-primary)] transition"
+                  title="Dismiss"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-[color:var(--text-primary)] truncate">
-                        {sighting.title}
-                      </p>
-                      <p className="text-xs text-[color:var(--text-secondary)] mt-1">
-                        {sighting.category} • {sighting.type}
-                      </p>
-                      <p className="text-xs text-[color:var(--text-tertiary)] mt-1">
-                        {sighting.observedAtLabel}
-                      </p>
-                    </div>
-                    <div
-                      className={`flex-shrink-0 w-2 h-2 rounded-full ${
-                        sighting.importance === "critical"
-                          ? "bg-[color:var(--accent-danger)]"
-                          : sighting.importance === "high"
-                            ? "bg-[color:var(--accent-warning)]"
-                            : sighting.importance === "low"
-                              ? "bg-[color:var(--accent-success)]"
-                              : "bg-[color:var(--text-tertiary)]"
-                      }`}
-                    />
-                  </div>
-                </div>
-              ))}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="mt-2 text-sm text-[color:var(--text-secondary)]">
+                Share and track local sightings, events, and hazards. Use the
+                sidebar to explore signals or report new ones.
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={dismissWelcome}
+                  className="rounded-lg bg-[color:var(--accent-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[color:var(--accent-hover)] transition"
+                >
+                  Got it
+                </button>
+              </div>
             </div>
           )}
         </div>
-      </Sidebar>
 
-      <Sidebar
-        isOpen={activeView === "report"}
-        onClose={closeView}
-        title="Report a Signal"
-      >
-        <div className="p-4 sm:p-6">
-          <ReportForm />
-        </div>
-      </Sidebar>
+        {/* Mobile Backdrop */}
+        {mobileSidebarOpen && (
+          <div
+            className="md:hidden fixed inset-0 bg-black/20 z-40 transition-opacity"
+            onClick={closeMobileSidebar}
+            aria-hidden="true"
+          />
+        )}
 
-      <Sidebar
-        isOpen={activeView === "geofences"}
-        onClose={closeView}
-        title="Geofences"
-        width="lg"
-      >
-        <div className="p-4 sm:p-6">
-          <ClientGeofenceStudio />
-        </div>
-      </Sidebar>
+        {/* Fixed Right Sidebar - Responsive */}
+        <aside
+          className={`
+            fixed md:relative
+            right-0 top-0 bottom-0
+            w-full sm:w-96
+            md:w-96
+            border-l border-[color:var(--border)]
+            bg-[color:var(--surface-elevated)]
+            flex flex-col overflow-hidden
+            z-50 md:z-auto
+            transform transition-transform duration-300 ease-out
+            ${mobileSidebarOpen ? "translate-x-0" : "translate-x-full"}
+            md:translate-x-0
+          `}
+        >
+          {/* Sidebar Header */}
+          <div className="flex items-center justify-between border-b border-[color:var(--border)] px-6 py-4 flex-shrink-0">
+            <h2 className="text-lg font-semibold text-[color:var(--text-primary)]">
+              {activeView === "signals" && "Signals"}
+              {activeView === "sightings" && "Sightings"}
+              {activeView === "report" && "Report a Signal"}
+              {activeView === "geofences" && "Geofences"}
+            </h2>
+            {/* Mobile Close Button */}
+            <button
+              onClick={closeMobileSidebar}
+              className="md:hidden rounded-full p-2 text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] transition"
+              aria-label="Close sidebar"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Sidebar Content - Scrollable */}
+          <div className="flex-1 overflow-y-auto">
+            {/* Signals View */}
+            {activeView === "signals" && <SignalsBrowser />}
+
+            {/* Sightings View */}
+            {activeView === "sightings" && (
+              <>
+                {/* Filters Section - Fixed at top */}
+                <div className="border-b border-[color:var(--border)] p-4 space-y-4 bg-[color:var(--surface-elevated)] sticky top-0 z-10">
+                  <div>
+                    <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
+                      Categories
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        "Nature",
+                        "Public Safety",
+                        "Community",
+                        "Hazards",
+                        "Infrastructure",
+                        "Events",
+                      ].map((category) => (
+                        <button
+                          key={category}
+                          onClick={() => toggleCategory(category)}
+                          className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                            selectedCategories.includes(category)
+                              ? "border-[color:var(--accent-primary)] bg-[color:var(--accent-primary)] text-white"
+                              : "border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"
+                          }`}
+                        >
+                          {category}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
+                      Importance
+                    </label>
+                    <select
+                      value={importanceFilter}
+                      onChange={(e) => setImportanceFilter(e.target.value)}
+                      className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--background)] px-3 py-2 text-sm text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-primary)]"
+                    >
+                      <option value="all">All levels</option>
+                      <option value="critical">Critical</option>
+                      <option value="high">High</option>
+                      <option value="normal">Normal</option>
+                      <option value="low">Low</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Sightings List - Scrollable */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-medium text-[color:var(--text-secondary)]">
+                      Nearby Signals
+                    </h3>
+                    <span className="text-xs text-[color:var(--text-tertiary)]">
+                      {filteredSightings.length} found
+                    </span>
+                  </div>
+
+                  {filteredSightings.length === 0 ? (
+                    <div className="py-8 text-center">
+                      <p className="text-sm text-[color:var(--text-secondary)]">
+                        No signals match your filters
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSelectedCategories([]);
+                          setImportanceFilter("all");
+                        }}
+                        className="mt-2 text-xs font-medium text-[color:var(--accent-primary)] hover:underline"
+                      >
+                        Clear filters
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {filteredSightings.map((sighting) => (
+                        <div
+                          key={sighting.id}
+                          onClick={() => {
+                            dispatchEvent(EVENTS.sightingSelected, {
+                              id: sighting.id,
+                              title: sighting.title,
+                              category: sighting.category,
+                              description: sighting.description,
+                              location: sighting.location,
+                            });
+                          }}
+                          className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-3 hover:bg-[color:var(--surface-elevated)] transition cursor-pointer"
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-[color:var(--text-primary)] truncate">
+                                {sighting.title}
+                              </p>
+                              <p className="text-xs text-[color:var(--text-secondary)] mt-1">
+                                {sighting.category} • {sighting.type}
+                              </p>
+                              <p className="text-xs text-[color:var(--text-tertiary)] mt-1">
+                                {sighting.observedAtLabel}
+                              </p>
+                            </div>
+                            <div
+                              className={`flex-shrink-0 w-2 h-2 rounded-full ${
+                                sighting.importance === "critical"
+                                  ? "bg-[color:var(--accent-danger)]"
+                                  : sighting.importance === "high"
+                                    ? "bg-[color:var(--accent-warning)]"
+                                    : sighting.importance === "low"
+                                      ? "bg-[color:var(--accent-success)]"
+                                      : "bg-[color:var(--text-tertiary)]"
+                              }`}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Report View */}
+            {activeView === "report" && (
+              <div className="p-4 sm:p-6">
+                <ReportForm />
+              </div>
+            )}
+
+            {/* Geofences View */}
+            {activeView === "geofences" && (
+              <div className="p-4 sm:p-6">
+                <ClientGeofenceStudio />
+              </div>
+            )}
+          </div>
+        </aside>
+      </main>
     </div>
   );
 }
