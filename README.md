@@ -1,8 +1,7 @@
 # SightSignal
 
-[![CI/CD Pipeline](https://github.com/your-org/sightsignal/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/sightsignal/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/your-org/sightsignal/branch/main/graph/badge.svg)](https://codecov.io/gh/your-org/sightsignal)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI/CD Pipeline](https://github.com/JerrettDavis/SightSignal/actions/workflows/ci.yml/badge.svg)](https://github.com/JerrettDavis/SightSignal/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/JerrettDavis/SightSignal/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.x-black.svg)](https://nextjs.org/)
 
