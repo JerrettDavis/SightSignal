@@ -146,7 +146,7 @@ export default function Home() {
   return (
     <div className="fixed inset-0 flex flex-col bg-[color:var(--background)]">
       {/* Top Bar */}
-      <header className="flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-elevated)] px-4 py-3 shadow-[var(--shadow-sm)] z-30 flex-shrink-0">
+      <header className="relative flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-elevated)] px-4 py-3 shadow-[var(--shadow-sm)] z-30 flex-shrink-0">
         <div className="flex items-center gap-3">
           {/* Mobile Menu Button */}
           <button
@@ -574,8 +574,11 @@ export default function Home() {
 
           {/* FAB - Create Signal */}
           <button
-            onClick={() => openView("report")}
-            className="absolute bottom-6 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--accent-primary)] text-white shadow-[var(--shadow-lg)] hover:bg-[color:var(--accent-hover)] transition-all hover:scale-105 active:scale-95 z-20"
+            onClick={() => {
+              setActiveView("report");
+              setMobileSidebarOpen(true);
+            }}
+            className="absolute bottom-24 right-6 flex h-14 w-14 items-center justify-center rounded-full bg-[color:var(--accent-primary)] text-white shadow-[var(--shadow-lg)] hover:bg-[color:var(--accent-hover)] transition-all hover:scale-105 active:scale-95 z-[100] pointer-events-auto"
             title="Create new signal"
             aria-label="Create new signal"
           >
