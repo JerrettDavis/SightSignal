@@ -326,7 +326,7 @@ export default function Home() {
         {/* Mobile Backdrop */}
         {mobileSidebarOpen && (
           <div
-            className="md:hidden fixed inset-0 top-[60px] bg-black/20 z-40 transition-opacity"
+            className="md:hidden fixed inset-0 top-[68px] bg-black/20 z-40 transition-opacity"
             onClick={closeMobileSidebar}
             aria-hidden="true"
           />
@@ -336,8 +336,8 @@ export default function Home() {
         <aside
           className={`
             fixed md:relative
-            left-0 top-[60px] md:top-auto
-            h-[calc(100vh-60px)]
+            left-0 top-[68px] md:top-auto
+            h-[calc(100vh-68px)]
             md:flex-1
             w-full sm:w-96
             md:w-96
