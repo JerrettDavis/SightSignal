@@ -19,10 +19,19 @@ function CommentItem({
   depth = 0,
 }: CommentItemProps) {
   const [userVote, setUserVote] = useState<"upvote" | "downvote" | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+
+  // Update "now" every minute for relative time display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   const formatRelativeTime = (iso: string) => {
     const date = new Date(iso);
-    const diffMs = Date.now() - date.getTime();
+    const diffMs = now - date.getTime();
     const diffMinutes = Math.round(diffMs / 60000);
     if (diffMinutes < 1) return "just now";
     if (diffMinutes < 60) return `${diffMinutes}m ago`;
@@ -190,7 +199,10 @@ export function CommentThread({ sightingId, userId }: CommentThreadProps) {
     }
   };
 
-  const handleVote = async (commentId: string, voteType: "upvote" | "downvote") => {
+  const handleVote = async (
+    commentId: string,
+    voteType: "upvote" | "downvote"
+  ) => {
     if (!userId) return;
 
     try {
