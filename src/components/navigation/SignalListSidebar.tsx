@@ -14,6 +14,7 @@ interface Signal {
 export default function SignalListSidebar() {
   const [signals, setSignals] = useState<Signal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { selectedSignal, navigateToSignal } = useSignalNavigation();
 
   useEffect(() => {
@@ -82,6 +83,42 @@ export default function SignalListSidebar() {
           </button>
         ))}
       </div>
+
+      {/* Create Signal Modal - TODO: Build proper signal creator */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-[color:var(--surface-elevated)] rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <h3 className="text-lg font-semibold text-[color:var(--text-primary)] mb-4">
+              Create Signal
+            </h3>
+            <p className="text-sm text-[color:var(--text-secondary)] mb-4">
+              Signal creation UI coming soon. This will allow you to:
+            </p>
+            <ul className="text-sm text-[color:var(--text-secondary)] space-y-2 mb-6 list-disc list-inside">
+              <li>Select a geofence or define custom area</li>
+              <li>Choose sighting types to include</li>
+              <li>Name and describe your signal</li>
+              <li>Set public/private visibility</li>
+              <li>Configure notification preferences</li>
+            </ul>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1 px-4 py-2 text-sm font-medium text-[color:var(--text-primary)] bg-[color:var(--surface)] hover:bg-[color:var(--surface-elevated)] border border-[color:var(--border)] rounded-lg transition"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1 px-4 py-2 text-sm font-medium text-white bg-[color:var(--accent-primary)] hover:bg-[color:var(--accent-hover)] rounded-lg transition"
+                disabled
+              >
+                Create (Soon)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

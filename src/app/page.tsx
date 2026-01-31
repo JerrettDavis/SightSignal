@@ -266,6 +266,17 @@ export default function Home() {
   const openView = (view: View) => {
     setActiveView(view);
     setMobileSidebarOpen(true); // Open sidebar on mobile when switching views
+
+    // Update URL
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (view) {
+        url.searchParams.set("view", view);
+      } else {
+        url.searchParams.delete("view");
+      }
+      window.history.pushState({}, "", url);
+    }
   };
 
   const closeMobileSidebar = () => {
