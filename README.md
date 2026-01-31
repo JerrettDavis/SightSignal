@@ -1,11 +1,11 @@
-# SightSignal
+# SignalFeed
 
 [![CI/CD Pipeline](https://github.com/JerrettDavis/SightSignal/actions/workflows/ci.yml/badge.svg)](https://github.com/JerrettDavis/SightSignal/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/JerrettDavis/SightSignal/blob/main/LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.x-black.svg)](https://nextjs.org/)
 
-> A map-first application for reporting and subscribing to local sightings (hazards, events, community notes) with strong UX focus, trust signals, and extensible integrations.
+> Real-time signals for everything you care about - a community-driven signal aggregation platform for real-world happenings
 
 ## Stack
 
@@ -75,10 +75,10 @@ npm run dev:compose:reset
 ## Environment
 
 - `NEXT_PUBLIC_MAP_STYLE_URL`: MapLibre style URL (defaults to `/map-style.json`).
-- `SIGHTSIGNAL_DATA_STORE`: `file` (default in dev), `memory`, or `postgres`.
-- `SIGHTSIGNAL_DATA_DIR`: directory for local JSON storage (defaults to `.local`).
+- `SIGNALFEED_DATA_STORE`: `file` (default in dev), `memory`, or `postgres`.
+- `SIGNALFEED_DATA_DIR`: directory for local JSON storage (defaults to `.local`).
   - Delete the folder to reset local data.
-- `SIGHTSIGNAL_DATABASE_URL`: Postgres connection string (used when `SIGHTSIGNAL_DATA_STORE=postgres`).
+- `SIGNALFEED_DATABASE_URL`: Postgres connection string (used when `SIGNALFEED_DATA_STORE=postgres`).
 
 ## API
 

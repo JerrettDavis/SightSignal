@@ -17,13 +17,13 @@ const bodyFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "SightSignal",
-  description: "Map-first signals for local sightings, events, and hazards.",
+  title: "SignalFeed",
+  description: "Real-time signals for everything you care about",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "SightSignal",
+    title: "SignalFeed",
   },
   icons: {
     icon: "/favicon.png",

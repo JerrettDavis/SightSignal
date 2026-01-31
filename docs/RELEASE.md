@@ -1,6 +1,6 @@
 # Release Process Guide
 
-This document describes the release process for SightSignal, including versioning strategy, release automation, and best practices.
+This document describes the release process for SignalFeed, including versioning strategy, release automation, and best practices.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document describes the release process for SightSignal, including versionin
 
 ## Overview
 
-SightSignal uses [standard-version](https://github.com/conventional-changelog/standard-version) for automated semantic versioning and changelog generation. The release process is semi-automated:
+SignalFeed uses [standard-version](https://github.com/conventional-changelog/standard-version) for automated semantic versioning and changelog generation. The release process is semi-automated:
 
 1. **Automated**: Version bumping and changelog generation based on conventional commits
 2. **Manual**: Creating and pushing release tags triggers the GitHub Actions release workflow
@@ -57,17 +57,17 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) specificatio
 
 ### Commit Types
 
-| Type | Description | Version Bump | Appears in Changelog |
-|------|-------------|--------------|---------------------|
-| `feat` | New feature | MINOR | Yes (Features) |
-| `fix` | Bug fix | PATCH | Yes (Bug Fixes) |
-| `docs` | Documentation changes | PATCH | Yes (Documentation) |
-| `refactor` | Code refactoring | PATCH | Yes (Code Refactoring) |
-| `perf` | Performance improvements | PATCH | Yes (Performance) |
-| `test` | Test changes | PATCH | No |
-| `chore` | Build/tooling changes | PATCH | No |
-| `style` | Code style changes | PATCH | No |
-| `ci` | CI/CD changes | PATCH | No |
+| Type       | Description              | Version Bump | Appears in Changelog   |
+| ---------- | ------------------------ | ------------ | ---------------------- |
+| `feat`     | New feature              | MINOR        | Yes (Features)         |
+| `fix`      | Bug fix                  | PATCH        | Yes (Bug Fixes)        |
+| `docs`     | Documentation changes    | PATCH        | Yes (Documentation)    |
+| `refactor` | Code refactoring         | PATCH        | Yes (Code Refactoring) |
+| `perf`     | Performance improvements | PATCH        | Yes (Performance)      |
+| `test`     | Test changes             | PATCH        | No                     |
+| `chore`    | Build/tooling changes    | PATCH        | No                     |
+| `style`    | Code style changes       | PATCH        | No                     |
+| `ci`       | CI/CD changes            | PATCH        | No                     |
 
 ### Breaking Changes
 
@@ -104,18 +104,21 @@ git commit -m "feat!: migrate to new database schema"
 Follow these steps for a standard release:
 
 1. **Ensure clean working directory**
+
    ```bash
    git status
    # Commit or stash any changes
    ```
 
 2. **Pull latest changes**
+
    ```bash
    git checkout main
    git pull origin main
    ```
 
 3. **Run quality checks**
+
    ```bash
    npm run typecheck
    npm run lint
@@ -124,6 +127,7 @@ Follow these steps for a standard release:
    ```
 
 4. **Run release script** (automatically determines version bump)
+
    ```bash
    npm run release
    ```
@@ -136,12 +140,14 @@ Follow these steps for a standard release:
    - Create a git tag (e.g., `v1.2.3`)
 
 5. **Review the changes**
+
    ```bash
    git log -1
    git show HEAD
    ```
 
 6. **Push to GitHub**
+
    ```bash
    git push --follow-tags origin main
    ```
@@ -182,12 +188,12 @@ npm run release -- --first-release --release-as 0.1.0
 
 The following scripts are available in `package.json`:
 
-| Script | Description |
-|--------|-------------|
-| `npm run release` | Automatic version bump based on commits |
-| `npm run release:patch` | Force patch version bump (0.0.x) |
-| `npm run release:minor` | Force minor version bump (0.x.0) |
-| `npm run release:major` | Force major version bump (x.0.0) |
+| Script                  | Description                             |
+| ----------------------- | --------------------------------------- |
+| `npm run release`       | Automatic version bump based on commits |
+| `npm run release:patch` | Force patch version bump (0.0.x)        |
+| `npm run release:minor` | Force minor version bump (0.x.0)        |
+| `npm run release:major` | Force major version bump (x.0.0)        |
 
 ### Additional Options
 
@@ -213,21 +219,25 @@ npm run release -- --prerelease alpha
 For critical bug fixes that need immediate release:
 
 1. **Create hotfix branch from the tag**
+
    ```bash
    git checkout -b hotfix/critical-bug v1.2.3
    ```
 
 2. **Make the fix and commit**
+
    ```bash
    git commit -m "fix: critical security vulnerability in authentication"
    ```
 
 3. **Create patch release**
+
    ```bash
    npm run release:patch
    ```
 
 4. **Push to repository**
+
    ```bash
    git push origin hotfix/critical-bug --follow-tags
    ```
@@ -241,6 +251,7 @@ For critical bug fixes that need immediate release:
 For testing releases before making them generally available:
 
 ### Alpha Release
+
 ```bash
 npm run release -- --prerelease alpha
 # Creates: 1.2.3-alpha.0
@@ -250,18 +261,21 @@ npm run release -- --prerelease alpha
 ```
 
 ### Beta Release
+
 ```bash
 npm run release -- --prerelease beta
 # Creates: 1.2.3-beta.0
 ```
 
 ### Release Candidate
+
 ```bash
 npm run release -- --prerelease rc
 # Creates: 1.2.3-rc.0
 ```
 
 ### Promoting to Stable
+
 ```bash
 # From 1.2.3-rc.1 to 1.2.3
 npm run release:patch
@@ -294,6 +308,7 @@ The automated release workflow (`.github/workflows/release.yml`) performs:
 ### Workflow Triggers
 
 The workflow is triggered by pushing a tag:
+
 ```bash
 git push --tags origin main
 ```
@@ -309,6 +324,7 @@ Tag format must be: `v*.*.*` (e.g., `v1.2.3`, `v0.1.0-beta.1`)
 ### Problem: Version bump is wrong
 
 **Solution**: Check your commit messages follow conventional commits format. Use explicit version with `--release-as`:
+
 ```bash
 npm run release -- --release-as 1.2.3
 ```
@@ -316,12 +332,14 @@ npm run release -- --release-as 1.2.3
 ### Problem: Wrong tag was created
 
 **Solution**: Delete the tag locally and remotely:
+
 ```bash
 git tag -d v1.2.3
 git push origin :refs/tags/v1.2.3
 ```
 
 Then recreate it:
+
 ```bash
 npm run release
 git push --follow-tags origin main
@@ -330,6 +348,7 @@ git push --follow-tags origin main
 ### Problem: Release workflow failed
 
 **Solution**:
+
 1. Check the Actions tab in GitHub for error details
 2. Fix the issue
 3. Delete the release and tag in GitHub
@@ -339,6 +358,7 @@ git push --follow-tags origin main
 ### Problem: CHANGELOG has wrong information
 
 **Solution**: Edit `CHANGELOG.md` manually before pushing tags:
+
 ```bash
 # After running npm run release but before pushing
 nano CHANGELOG.md
@@ -352,6 +372,7 @@ git push --follow-tags origin main
 ## Best Practices
 
 1. **Always run tests before releasing**
+
    ```bash
    npm run typecheck && npm run lint && npm run test && npm run e2e
    ```

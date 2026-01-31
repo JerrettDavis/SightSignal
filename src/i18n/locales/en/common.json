@@ -1,0 +1,36 @@
+{
+  "brand": {
+    "name": "SignalFeed",
+    "tagline": "Real-time signals for everything you care about",
+    "description": "Community-driven signal aggregation platform for real-world happenings"
+  },
+  "nav": {
+    "home": "Home",
+    "map": "Map",
+    "signals": "Signals",
+    "explore": "Explore",
+    "settings": "Settings",
+    "profile": "Profile",
+    "admin": "Admin"
+  },
+  "actions": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "report": "Report",
+    "subscribe": "Subscribe",
+    "unsubscribe": "Unsubscribe",
+    "close": "Close",
+    "open": "Open",
+    "confirm": "Confirm"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success!",
+    "offline": "You are currently offline",
+    "online": "You are back online"
+  }
+}

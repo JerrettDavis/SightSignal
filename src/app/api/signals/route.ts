@@ -28,12 +28,9 @@ const getUserIdFromSession = (): string | null => {
 };
 
 export const GET = async (request: Request) => {
-  const userId = getUserIdFromSession();
-  if (!userId) {
-    return jsonUnauthorized("Authentication required");
-  }
-
-  const signals = await getUserSignals(userId);
+  // For browsing all signals (like browsing subreddits), don't filter by user
+  // In the future, we might add query params like ?mine=true to filter by ownership
+  const signals = await repository.listWithSubscriptionCounts({});
   return jsonOk({ data: signals });
 };
 

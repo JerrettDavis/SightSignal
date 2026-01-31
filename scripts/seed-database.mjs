@@ -24,44 +24,57 @@ const __dirname = dirname(__filename);
 
 // Load .env file
 function loadEnv() {
-  try {
-    const envPath = join(__dirname, '../.env');
-    const envContent = readFileSync(envPath, 'utf-8');
+  // Try .env.local first, then fall back to .env
+  const envFiles = ['.env.local', '.env'];
+  
+  for (const envFile of envFiles) {
+    try {
+      const envPath = join(__dirname, `../${envFile}`);
+      const envContent = readFileSync(envPath, 'utf-8');
 
-    envContent.split('\n').forEach(line => {
-      line = line.trim();
-      if (!line || line.startsWith('#')) return;
+      envContent.split('\n').forEach(line => {
+        line = line.trim();
+        if (!line || line.startsWith('#')) return;
 
-      const match = line.match(/^([^=]+)=(.*)$/);
-      if (match) {
-        const key = match[1].trim();
-        let value = match[2].trim();
+        const match = line.match(/^([^=]+)=(.*)$/);
+        if (match) {
+          const key = match[1].trim();
+          let value = match[2].trim();
 
-        // Remove quotes if present
-        if ((value.startsWith('"') && value.endsWith('"')) ||
-            (value.startsWith("'") && value.endsWith("'"))) {
-          value = value.slice(1, -1);
+          // Remove quotes if present
+          if ((value.startsWith('"') && value.endsWith('"')) ||
+              (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.slice(1, -1);
+          }
+
+          // Unescape dollar signs
+          value = value.replace(/\\\$/g, '$');
+
+          process.env[key] = value;
         }
-
-        // Unescape dollar signs
-        value = value.replace(/\\\$/g, '$');
-
-        process.env[key] = value;
-      }
-    });
-  } catch (error) {
-    // .env file not found, continue with existing env vars
+      });
+      
+      console.log(`✅ Loaded environment from ${envFile}`);
+      return;
+    } catch (error) {
+      // Try next file
+      continue;
+    }
   }
+  
+  console.log('⚠️  No .env file found, using existing environment variables');
 }
 
 loadEnv();
 
-// Get database URL from environment
-const databaseUrl = process.env.SIGHTSIGNAL_DATABASE_URL;
+// Get database URL from environment (support both new and legacy names)
+const databaseUrl = 
+  process.env.SIGNALFEED_DATABASE_URL || 
+  process.env.SIGHTSIGNAL_DATABASE_URL;
 
 if (!databaseUrl) {
-  console.error('❌ Error: SIGHTSIGNAL_DATABASE_URL environment variable is not set');
-  console.error('Please set it in your .env file or environment');
+  console.error('❌ Error: Database URL environment variable is not set');
+  console.error('Please set SIGNALFEED_DATABASE_URL or SIGHTSIGNAL_DATABASE_URL in your .env.local file');
   process.exit(1);
 }
 

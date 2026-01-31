@@ -38,7 +38,6 @@ test.describe("Signals Sidebar", () => {
     await page.getByRole("button", { name: "Signals" }).click();
 
     // Loading message should appear briefly
-    const loadingMessage = page.getByText("Loading signals...");
     // Note: This might pass the loading state too quickly to catch
   });
 

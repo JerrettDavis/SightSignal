@@ -1,6 +1,6 @@
 # Test Coverage Summary
 
-This document provides a comprehensive overview of SightSignal's test coverage and quality assurance measures.
+This document provides a comprehensive overview of SignalFeed's test coverage and quality assurance measures.
 
 ## Quick Stats
 
@@ -425,7 +425,7 @@ npm run e2e:ui        # Interactive E2E test UI
 
 ## Conclusion
 
-SightSignal has comprehensive test coverage across all major features with:
+SignalFeed has comprehensive test coverage across all major features with:
 
 - ✅ Automated CI/CD pipeline
 - ✅ Multiple storage backend testing

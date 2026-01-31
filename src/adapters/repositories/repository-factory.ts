@@ -8,12 +8,16 @@ import { InMemoryPushSubscriptionRepository } from "@/adapters/repositories/in-m
 import { fileSightingRepository } from "@/adapters/repositories/file-sighting-repository";
 import { fileGeofenceRepository } from "@/adapters/repositories/file-geofence-repository";
 import { fileSubscriptionRepository } from "@/adapters/repositories/file-subscription-repository";
+import { fileUserRepository } from "@/adapters/repositories/file-user-repository";
+import { FileCredentialsRepository } from "@/adapters/repositories/file-credentials-repository";
 import { postgresSightingRepository } from "@/adapters/repositories/postgres/postgres-sighting-repository";
 import { postgresGeofenceRepository } from "@/adapters/repositories/postgres/postgres-geofence-repository";
 import { postgresSubscriptionRepository } from "@/adapters/repositories/postgres/postgres-subscription-repository";
 import { postgresReputationRepository } from "@/adapters/repositories/postgres/postgres-reputation-repository";
 import { postgresSightingReactionRepository } from "@/adapters/repositories/postgres/postgres-sighting-reaction-repository";
 import { postgresTaxonomyRepository } from "@/adapters/repositories/postgres/postgres-taxonomy-repository";
+import { buildPostgresCredentialsRepository } from "@/adapters/repositories/postgres/postgres-credentials-repository";
+import { buildPostgresPasskeyRepository } from "@/adapters/repositories/postgres/postgres-passkey-repository";
 import { inMemoryUserRepository } from "@/adapters/repositories/in-memory-user-repository";
 import { buildPostgresUserRepository } from "@/adapters/repositories/postgres/postgres-user-repository";
 import { inMemoryReputationRepository } from "@/adapters/repositories/in-memory-reputation-repository";
@@ -26,7 +30,9 @@ import { getSql } from "@/adapters/repositories/postgres/client";
 type StoreType = "memory" | "file" | "postgres";
 
 const resolveStoreType = (): StoreType => {
-  const fromEnv = process.env.SIGHTSIGNAL_DATA_STORE as StoreType | undefined;
+  // Support both SIGNALFEED_ (new) and SIGHTSIGNAL_ (legacy) prefixes
+  const fromEnv = (process.env.SIGNALFEED_DATA_STORE ||
+    process.env.SIGHTSIGNAL_DATA_STORE) as StoreType | undefined;
   if (fromEnv === "memory" || fromEnv === "file" || fromEnv === "postgres") {
     return fromEnv;
   }
@@ -95,6 +101,9 @@ export const getUserRepository = () => {
   if (store === "postgres") {
     return buildPostgresUserRepository(getSql());
   }
+  if (store === "file") {
+    return fileUserRepository();
+  }
   return inMemoryUserRepository();
 };
 
@@ -116,12 +125,24 @@ export const getCommentRepository = () => {
   return commentRepositoryInstance;
 };
 
-// Credentials are in-memory only for now
-let credentialsRepositoryInstance: InMemoryCredentialsRepository | null = null;
+// Credentials - now support file and postgres storage
+let credentialsRepositoryInstance:
+  | InMemoryCredentialsRepository
+  | FileCredentialsRepository
+  | ReturnType<typeof buildPostgresCredentialsRepository>
+  | null = null;
 
 export const getCredentialsRepository = () => {
   if (!credentialsRepositoryInstance) {
-    credentialsRepositoryInstance = new InMemoryCredentialsRepository();
+    const store = resolveStoreType();
+    if (store === "postgres") {
+      credentialsRepositoryInstance =
+        buildPostgresCredentialsRepository(getSql());
+    } else if (store === "file") {
+      credentialsRepositoryInstance = new FileCredentialsRepository();
+    } else {
+      credentialsRepositoryInstance = new InMemoryCredentialsRepository();
+    }
   }
   return credentialsRepositoryInstance;
 };
@@ -172,4 +193,22 @@ export const getLocationSharingRepository = () => {
     locationSharingRepositoryInstance = new InMemoryLocationSharingRepository();
   }
   return locationSharingRepositoryInstance;
+};
+
+// Passkeys - postgres only (WebAuthn requires persistent storage)
+let passkeyRepositoryInstance: ReturnType<
+  typeof buildPostgresPasskeyRepository
+> | null = null;
+
+export const getPasskeyRepository = () => {
+  if (!passkeyRepositoryInstance) {
+    const store = resolveStoreType();
+    if (store !== "postgres") {
+      throw new Error(
+        "Passkeys require PostgreSQL storage. Set SIGNALFEED_DATA_STORE=postgres"
+      );
+    }
+    passkeyRepositoryInstance = buildPostgresPasskeyRepository(getSql());
+  }
+  return passkeyRepositoryInstance;
 };

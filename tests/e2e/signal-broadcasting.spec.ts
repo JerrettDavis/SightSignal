@@ -188,7 +188,7 @@ test.describe("Signal Broadcasting Infrastructure", () => {
     }
   });
 
-  test("should support mock email delivery configuration", async ({ page }) => {
+  test("should support mock email delivery configuration", async () => {
     // When email broadcasting is implemented, it should support:
     // - Template configuration
     // - From/Reply-To addresses
@@ -219,7 +219,7 @@ test.describe("Signal Broadcasting Infrastructure", () => {
     expect(mockEmailConfig).toHaveProperty("template");
   });
 
-  test("should support webhook delivery configuration", async ({ page }) => {
+  test("should support webhook delivery configuration", async () => {
     // When webhook broadcasting is implemented, it should support:
     // - Custom webhook URLs per subscription
     // - HTTP method (POST, PUT)
@@ -259,7 +259,7 @@ test.describe("Signal Broadcasting Infrastructure", () => {
     expect(mockWebhookConfig).toHaveProperty("retryPolicy");
   });
 
-  test("should support push notification configuration", async ({ page }) => {
+  test("should support push notification configuration", async () => {
     // When push notifications are implemented, it should support:
     // - Web Push API
     // - Service worker registration
@@ -293,9 +293,7 @@ test.describe("Signal Broadcasting Infrastructure", () => {
     expect(mockPushConfig).toHaveProperty("notification");
   });
 
-  test("signal broadcasting should respect user preferences", async ({
-    page,
-  }) => {
+  test("signal broadcasting should respect user preferences", async () => {
     // When user preferences are implemented, broadcasting should:
     // - Respect opt-out preferences
     // - Honor delivery method preferences (email only, push only, etc.)
@@ -305,7 +303,7 @@ test.describe("Signal Broadcasting Infrastructure", () => {
     // This test documents expected behavior
   });
 
-  test("should track signal delivery metrics", async ({ page }) => {
+  test("should track signal delivery metrics", async () => {
     // When metrics tracking is implemented, it should capture:
     // - Delivery attempts
     // - Successful deliveries

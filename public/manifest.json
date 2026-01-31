@@ -1,7 +1,7 @@
 {
-  "name": "SightSignal",
-  "short_name": "SightSignal",
-  "description": "Local intelligence and community sightings platform",
+  "name": "SignalFeed",
+  "short_name": "SignalFeed",
+  "description": "Real-time signals for everything you care about",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

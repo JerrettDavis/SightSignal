@@ -129,8 +129,9 @@ export function setCachedResponse<T>(data: T, config: CacheConfig): string {
 export function invalidateCache(keyOrPattern: string): void {
   if (keyOrPattern.includes("*")) {
     // Pattern matching (simple implementation)
-    const pattern = new RegExp("^" + keyOrPattern.replace(/\*/g, ".*") + "$");
+    const regex = new RegExp("^" + keyOrPattern.replace(/\*/g, ".*") + "$");
     // Note: This is inefficient for large caches, use Redis SCAN in production
+    console.log(`Clearing cache with pattern: ${regex.source}`);
     responseCache.clear(); // For simplicity, clear all
   } else {
     responseCache.delete(keyOrPattern);

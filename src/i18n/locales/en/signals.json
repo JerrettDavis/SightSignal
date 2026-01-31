@@ -1,0 +1,23 @@
+{
+  "list": {
+    "title": "Signals",
+    "empty": "No signals available",
+    "loading": "Loading signals..."
+  },
+  "create": {
+    "title": "Create Signal",
+    "button": "Create New Signal",
+    "success": "Signal created successfully"
+  },
+  "details": {
+    "title": "Signal Details",
+    "subscribers": "Subscribers",
+    "conditions": "Conditions"
+  },
+  "broadcast": {
+    "title": "Broadcast Signal",
+    "sending": "Sending...",
+    "success": "Signal broadcast successfully",
+    "error": "Failed to broadcast signal"
+  }
+}

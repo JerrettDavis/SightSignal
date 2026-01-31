@@ -23,8 +23,8 @@ export default defineConfig({
     url: baseUrl,
     reuseExistingServer: !process.env.CI,
     env: {
-      SIGHTSIGNAL_DATA_STORE: "file",
-      SIGHTSIGNAL_DATA_DIR: e2eDataDir,
+      SIGNALFEED_DATA_STORE: "file",
+      SIGNALFEED_DATA_DIR: e2eDataDir,
       ADMIN_AUTH_ENABLED: "true",
       ADMIN_JWT_SECRET: "test-secret-for-e2e-testing-only-min-32-chars",
       ADMIN_USERS:

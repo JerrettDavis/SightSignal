@@ -2,25 +2,25 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: sightsignal
-      POSTGRES_PASSWORD: sightsignal
-      POSTGRES_DB: sightsignal
+      POSTGRES_USER: signalfeed
+      POSTGRES_PASSWORD: signalfeed
+      POSTGRES_DB: signalfeed
     ports:
       - "5432:5432"
     volumes:
-      - sightsignal_pgdata:/var/lib/postgresql/data
+      - signalfeed_pgdata:/var/lib/postgresql/data
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sightsignal -d sightsignal"]
+      test: ["CMD-SHELL", "pg_isready -U signalfeed -d signalfeed"]
       interval: 5s
       timeout: 3s
       retries: 10
     networks:
-      - sightsignal
+      - signalfeed
 
 volumes:
-  sightsignal_pgdata:
+  signalfeed_pgdata:
 
 networks:
-  sightsignal:
-    name: sightsignal_net
+  signalfeed:
+    name: signalfeed_net

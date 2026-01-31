@@ -1,6 +1,6 @@
 # Database Seeding Guide
 
-This guide explains how to reset and seed your SightSignal database.
+This guide explains how to reset and seed your SignalFeed database.
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@ This guide explains how to reset and seed your SightSignal database.
 
 ```bash
 # In your .env file
-SIGHTSIGNAL_DATABASE_URL=postgresql://sightsignal:sightsignal@localhost:5432/sightsignal
+SignalFeed_DATABASE_URL=postgresql://SignalFeed:SignalFeed@localhost:5432/SignalFeed
 ```
 
 ## Quick Start
@@ -74,14 +74,14 @@ npm run db:seed
 
 ### Users (6 accounts)
 
-| Username       | Email                       | Role      | Status    |
-| -------------- | --------------------------- | --------- | --------- |
-| admin          | admin@sightsignal.local     | admin     | active    |
-| mod_sarah      | moderator@sightsignal.local | moderator | active    |
-| john_downtown  | john.doe@example.com        | user      | active    |
-| jane_parks     | jane.smith@example.com      | user      | active    |
-| bob_commuter   | bob.wilson@example.com      | user      | active    |
-| suspended_user | suspended@example.com       | user      | suspended |
+| Username       | Email                      | Role      | Status    |
+| -------------- | -------------------------- | --------- | --------- |
+| admin          | admin@SignalFeed.local     | admin     | active    |
+| mod_sarah      | moderator@SignalFeed.local | moderator | active    |
+| john_downtown  | john.doe@example.com       | user      | active    |
+| jane_parks     | jane.smith@example.com     | user      | active    |
+| bob_commuter   | bob.wilson@example.com     | user      | active    |
+| suspended_user | suspended@example.com      | user      | suspended |
 
 ### Geofences (8 areas)
 
@@ -197,12 +197,12 @@ Then update `scripts/seed-database.mjs` to include your new data in the seeding 
 
 ## Troubleshooting
 
-### "SIGHTSIGNAL_DATABASE_URL not set"
+### "SignalFeed_DATABASE_URL not set"
 
 Set the environment variable in your `.env` file:
 
 ```bash
-SIGHTSIGNAL_DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
+SignalFeed_DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
 ```
 
 ### "Connection refused"

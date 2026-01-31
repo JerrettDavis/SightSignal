@@ -2,7 +2,7 @@
 
 ## Overview
 
-SightSignal now has **Follow Me mode** - users can share their real-time location with other users while maintaining control over who can see them.
+SignalFeed now has **Follow Me mode** - users can share their real-time location with other users while maintaining control over who can see them.
 
 ## How It Works
 

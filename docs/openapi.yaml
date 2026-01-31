@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
-  title: SightSignal API
+  title: SignalFeed API
   version: 0.1.0
-  description: Contract-first API for map-based signals and geofences.
+  description: Real-time signal aggregation API for community-driven happenings and events.
 servers:
-  - url: https://sightsignal.example.com
+  - url: https://signalfeed.app
 paths:
   /api/sightings:
     get:

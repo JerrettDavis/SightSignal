@@ -79,7 +79,7 @@ jobs:
         run: npm run e2e
         env:
           CI: true
-          SIGHTSIGNAL_DATA_STORE: file
+          SIGNALFEED_DATA_STORE: file
           ADMIN_AUTH_ENABLED: true
           ADMIN_JWT_SECRET: test-secret-for-ci-testing-only-minimum-32-characters-required
           ADMIN_USERS: admin:$2b$10$3ucZ/lmCdbbQNyxmXgDv2uBIXueZcUdtKpJVYkd5NvVdZyZVyRl3C
@@ -101,9 +101,9 @@ jobs:
       postgres:
         image: postgres:16-alpine
         env:
-          POSTGRES_USER: sightsignal_test
-          POSTGRES_PASSWORD: sightsignal_test
-          POSTGRES_DB: sightsignal_test
+          POSTGRES_USER: signalfeed_test
+          POSTGRES_PASSWORD: signalfeed_test
+          POSTGRES_DB: signalfeed_test
         ports:
           - 5433:5432
         options: >-
@@ -127,7 +127,7 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5433 -U sightsignal_test; do
+          until pg_isready -h localhost -p 5433 -U signalfeed_test; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
@@ -135,7 +135,7 @@ jobs:
       - name: Setup test database
         run: node scripts/test-db-setup.mjs
         env:
-          TEST_DATABASE_URL: postgresql://sightsignal_test:sightsignal_test@localhost:5433/sightsignal_test
+          TEST_DATABASE_URL: postgresql://signalfeed_test:signalfeed_test@localhost:5433/signalfeed_test
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
@@ -144,8 +144,8 @@ jobs:
         run: npm run e2e
         env:
           CI: true
-          SIGHTSIGNAL_DATA_STORE: postgres
-          SIGHTSIGNAL_DATABASE_URL: postgresql://sightsignal_test:sightsignal_test@localhost:5433/sightsignal_test
+          SIGNALFEED_DATA_STORE: postgres
+          SIGNALFEED_DATABASE_URL: postgresql://signalfeed_test:signalfeed_test@localhost:5433/signalfeed_test
           ADMIN_AUTH_ENABLED: true
           ADMIN_JWT_SECRET: test-secret-for-ci-testing-only-minimum-32-characters-required
           ADMIN_USERS: admin:$2b$10$3ucZ/lmCdbbQNyxmXgDv2uBIXueZcUdtKpJVYkd5NvVdZyZVyRl3C

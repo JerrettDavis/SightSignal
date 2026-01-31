@@ -1,0 +1,25 @@
+{
+  "login": {
+    "title": "Admin Login",
+    "email": "Email Address",
+    "submit": "Send Magic Link",
+    "success": "Check your email for the login link",
+    "error": "Failed to send login link"
+  },
+  "dashboard": {
+    "title": "Admin Dashboard",
+    "users": "Users",
+    "sightings": "Sightings",
+    "signals": "Signals",
+    "geofences": "Geofences"
+  },
+  "navigation": {
+    "overview": "Overview",
+    "users": "Users",
+    "sightings": "Sightings",
+    "taxonomy": "Taxonomy",
+    "geofences": "Geofences",
+    "subscriptions": "Subscriptions",
+    "reputation": "Reputation"
+  }
+}

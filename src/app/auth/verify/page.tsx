@@ -2,14 +2,16 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { PasskeyEnrollment } from "@/components/auth/PasskeyEnrollment";
 
 function VerifyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<"verifying" | "success" | "error">(
-    "verifying"
-  );
+  const [status, setStatus] = useState<
+    "verifying" | "success" | "error" | "passkey-enrollment"
+  >("verifying");
   const [message, setMessage] = useState("Verifying your magic link...");
+  const [showPasskeyEnrollment, setShowPasskeyEnrollment] = useState(false);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -28,13 +30,12 @@ function VerifyContent() {
 
         if (response.ok) {
           setStatus("success");
-          setMessage("Successfully logged in! Redirecting...");
+          setMessage("Successfully logged in!");
 
-          // Force a full page reload instead of just router.push
-          // This ensures the main page re-runs auth check
+          // Offer passkey enrollment after brief delay
           setTimeout(() => {
-            window.location.href = "/";
-          }, 1500);
+            setShowPasskeyEnrollment(true);
+          }, 1000);
         } else {
           const data = await response.json();
           setStatus("error");
@@ -48,7 +49,26 @@ function VerifyContent() {
     };
 
     verify();
-  }, [searchParams, router]);
+  }, [searchParams]);
+
+  const handlePasskeyEnrollmentSuccess = () => {
+    window.location.href = "/";
+  };
+
+  const handleSkipPasskey = () => {
+    window.location.href = "/";
+  };
+
+  if (showPasskeyEnrollment) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[color:var(--background)] p-6">
+        <PasskeyEnrollment
+          onSuccess={handlePasskeyEnrollmentSuccess}
+          onSkip={handleSkipPasskey}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[color:var(--background)] p-6">

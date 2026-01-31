@@ -2,7 +2,9 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 export const getDataDir = () =>
-  process.env.SIGHTSIGNAL_DATA_DIR ?? path.join(process.cwd(), ".local");
+  process.env.SIGNALFEED_DATA_DIR ??
+  process.env.SIGHTSIGNAL_DATA_DIR ??
+  path.join(process.cwd(), ".local");
 
 const ensureFile = async <T>(filePath: string, seed: T[]) => {
   await fs.mkdir(path.dirname(filePath), { recursive: true });

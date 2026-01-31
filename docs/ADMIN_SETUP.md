@@ -1,4 +1,4 @@
-# SightSignal Admin Panel Setup Guide
+# SignalFeed Admin Panel Setup Guide
 
 ## Quick Start
 

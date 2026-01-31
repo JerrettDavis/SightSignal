@@ -1,0 +1,32 @@
+{
+  "list": {
+    "title": "Sightings",
+    "empty": "No sightings found",
+    "loading": "Loading sightings..."
+  },
+  "report": {
+    "title": "Report Sighting",
+    "button": "Report",
+    "success": "Sighting reported successfully",
+    "error": "Failed to report sighting"
+  },
+  "details": {
+    "title": "Sighting Details",
+    "location": "Location",
+    "time": "Time",
+    "category": "Category",
+    "description": "Description"
+  },
+  "reactions": {
+    "helpful": "Helpful",
+    "notHelpful": "Not Helpful",
+    "confirmed": "Confirmed",
+    "outdated": "Outdated"
+  },
+  "comments": {
+    "title": "Comments",
+    "add": "Add Comment",
+    "empty": "No comments yet",
+    "placeholder": "Write a comment..."
+  }
+}

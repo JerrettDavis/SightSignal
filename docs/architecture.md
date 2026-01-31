@@ -34,9 +34,9 @@ Current implementation uses file-backed adapters for local dev and in-memory as 
 
 Environment switches:
 
-- `SIGHTSIGNAL_DATA_STORE` selects `file` or `memory`.
-- `SIGHTSIGNAL_DATA_DIR` sets the local storage path.
-- `SIGHTSIGNAL_DATA_STORE=postgres` uses the Postgres adapter with `SIGHTSIGNAL_DATABASE_URL`.
+- `SIGNALFEED_DATA_STORE` selects `file` or `memory`.
+- `SIGNALFEED_DATA_DIR` sets the local storage path.
+- `SIGNALFEED_DATA_STORE=postgres` uses the Postgres adapter with `SIGNALFEED_DATABASE_URL`.
 
 ## Security baseline
 

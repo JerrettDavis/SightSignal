@@ -118,6 +118,7 @@ export const postgresSignalRepository = (): SignalRepository => {
         return rows.map((row) => ({
           ...mapRow(row),
           subscriptionCount: Number(row.subscription_count ?? 0),
+          sightingCount: Number(row.sighting_count ?? 0),
         }));
       }
 

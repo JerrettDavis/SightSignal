@@ -8,8 +8,8 @@ services:
     environment:
       NODE_ENV: development
       NEXT_DISABLE_TURBOPACK: "1"
-      SIGHTSIGNAL_DATA_STORE: postgres
-      SIGHTSIGNAL_DATABASE_URL: postgres://sightsignal:sightsignal@db:5432/sightsignal
+      SIGNALFEED_DATA_STORE: postgres
+      SIGNALFEED_DATABASE_URL: postgres://signalfeed:signalfeed@db:5432/signalfeed
     volumes:
       - ./:/app
       - /app/node_modules
@@ -17,4 +17,4 @@ services:
       db:
         condition: service_healthy
     networks:
-      - sightsignal
+      - signalfeed

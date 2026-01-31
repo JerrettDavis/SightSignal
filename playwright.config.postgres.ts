@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test";
 const baseUrl = "http://127.0.0.1:3000";
 const testDatabaseUrl =
   process.env.TEST_DATABASE_URL ||
-  "postgresql://sightsignal_test:sightsignal_test@localhost:5433/sightsignal_test";
+  "postgresql://signalfeed_test:signalfeed_test@localhost:5433/signalfeed_test";
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -23,8 +23,8 @@ export default defineConfig({
     url: baseUrl,
     reuseExistingServer: !process.env.CI,
     env: {
-      SIGHTSIGNAL_DATA_STORE: "postgres",
-      SIGHTSIGNAL_DATABASE_URL: testDatabaseUrl,
+      SIGNALFEED_DATA_STORE: "postgres",
+      SIGNALFEED_DATABASE_URL: testDatabaseUrl,
       ADMIN_AUTH_ENABLED: "true",
       ADMIN_JWT_SECRET: "test-secret-for-e2e-testing-only-min-32-chars",
       ADMIN_USERS:

@@ -1,6 +1,6 @@
-# SightSignal Testing Guide
+# SignalFeed Testing Guide
 
-This document describes the comprehensive testing infrastructure for SightSignal, including unit tests, E2E tests, and CI/CD workflows.
+This document describes the comprehensive testing infrastructure for SignalFeed, including unit tests, E2E tests, and CI/CD workflows.
 
 ## Table of Contents
 
@@ -15,7 +15,7 @@ This document describes the comprehensive testing infrastructure for SightSignal
 
 ## Overview
 
-SightSignal uses a multi-layered testing approach:
+SignalFeed uses a multi-layered testing approach:
 
 1. **Unit Tests** - Test individual functions and components in isolation (Vitest)
 2. **E2E Tests** - Test complete user workflows with real browser automation (Playwright)
@@ -364,7 +364,7 @@ test("admin test", async ({ page }) => {
 
 3. **Verify connection**:
    ```bash
-   docker exec -it sightsignal-db-test psql -U sightsignal_test -d sightsignal_test -c "SELECT version();"
+   docker exec -it SignalFeed-db-test psql -U SignalFeed_test -d SignalFeed_test -c "SELECT version();"
    ```
 
 ### Tests Timing Out
@@ -425,6 +425,6 @@ test("admin test", async ({ page }) => {
 
 If you encounter issues not covered in this guide:
 
-1. Check the [GitHub Issues](https://github.com/your-org/sightsignal/issues)
+1. Check the [GitHub Issues](https://github.com/your-org/SignalFeed/issues)
 2. Review Playwright traces: `npx playwright show-trace trace.zip`
 3. Run tests in debug mode: `npx playwright test --debug`

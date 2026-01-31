@@ -85,7 +85,7 @@ test.describe("Public/Private Visibility", () => {
 
     // However, it should still be available in the subscription target dropdown
     const targetSelect = page.getByRole("combobox", { name: "Target" });
-    const options = await targetSelect.locator("option").allTextContents();
+    await targetSelect.locator("option").allTextContents();
 
     // Private geofences might still be in dropdown for owner
     // This depends on implementation - adjust based on actual behavior

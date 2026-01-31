@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PasskeyLogin } from "./PasskeyLogin";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -13,11 +14,12 @@ interface AuthModalProps {
   }) => void;
 }
 
-export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPasskeyLogin, setShowPasskeyLogin] = useState(false);
 
   if (!isOpen) return null;
 
@@ -57,7 +59,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setEmail("");
     setSent(false);
     setError(null);
+    setShowPasskeyLogin(false);
     onClose();
+  };
+
+  const handlePasskeySuccess = (user: {
+    id: string;
+    email: string;
+    username: string;
+    role: string;
+  }) => {
+    onSuccess(user);
+    handleClose();
   };
 
   return (
@@ -73,7 +86,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         >
           <div className="flex items-center justify-between border-b border-[color:var(--border)] px-6 py-4">
             <h2 className="text-xl font-semibold text-[color:var(--text-primary)]">
-              {sent ? "Check Your Email" : "Welcome"}
+              {sent
+                ? "Check Your Email"
+                : showPasskeyLogin
+                  ? "Sign In with Passkey"
+                  : "Welcome"}
             </h2>
             <button
               onClick={handleClose}
@@ -95,7 +112,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </button>
           </div>
 
-          {!sent ? (
+          {!sent && !showPasskeyLogin ? (
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <p className="text-sm text-[color:var(--text-secondary)]">
                 Enter your email to get started. We&apos;ll send you a magic
@@ -138,10 +155,36 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 {loading ? "Sending..." : "Send Magic Link"}
               </button>
 
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[color:var(--border)]" />
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="bg-[color:var(--surface)] px-2 text-[color:var(--text-tertiary)]">
+                    OR
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowPasskeyLogin(true)}
+                className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-secondary)] transition hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"
+              >
+                Sign In with Passkey
+              </button>
+
               <p className="text-center text-xs text-[color:var(--text-tertiary)]">
                 No password required • Secure & instant
               </p>
             </form>
+          ) : showPasskeyLogin ? (
+            <div className="p-6">
+              <PasskeyLogin
+                onSuccess={handlePasskeySuccess}
+                onCancel={() => setShowPasskeyLogin(false)}
+              />
+            </div>
           ) : (
             <div className="p-6 space-y-4">
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[color:var(--accent-success)]/10">

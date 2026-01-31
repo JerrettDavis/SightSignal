@@ -1,10 +1,10 @@
-# SightSignal - Enterprise Scaling Guide
+# SignalFeed - Enterprise Scaling Guide
 
-This document outlines the enterprise-ready features implemented in SightSignal to handle viral/high-traffic scenarios.
+This document outlines the enterprise-ready features implemented in SignalFeed to handle viral/high-traffic scenarios.
 
 ## Overview
 
-SightSignal is designed to scale gracefully from thousands to millions of daily requests. The following features ensure reliability, performance, and cost-efficiency under load.
+SignalFeed is designed to scale gracefully from thousands to millions of daily requests. The following features ensure reliability, performance, and cost-efficiency under load.
 
 ---
 

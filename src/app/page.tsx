@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { ReportForm } from "@/components/report-form";
 import { ClientGeofenceStudio } from "@/components/client-geofence-studio";
 import { ClientSightingsExplorer } from "@/components/client-sightings-explorer";
-import { SignalsBrowser } from "@/components/signals/SignalsBrowser";
+import SidebarStack from "@/components/navigation/SidebarStack";
 import { SightingDrilldown } from "@/components/sightings/SightingDrilldown";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserDropdown } from "@/components/auth/UserDropdown";
@@ -562,7 +562,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content - Map + Fixed Sidebar */}
+      {/* Main Content - Map + Sidebars */}
       <main className="flex flex-1 overflow-hidden">
         {/* Mobile Backdrop */}
         {mobileSidebarOpen && (
@@ -573,201 +573,216 @@ export default function Home() {
           />
         )}
 
-        {/* Fixed Left Sidebar - Responsive */}
-        <aside
-          className={`
+        {/* Signals View - 3-tier Navigation (replaces entire sidebar) */}
+        {activeView === "signals" ? (
+          <div
+            className={`
             fixed md:relative
             left-0 top-[68px] md:top-auto
             h-[calc(100vh-68px)]
-            md:flex-1
-            w-full sm:w-96
-            md:w-96
-            border-r border-[color:var(--border)]
-            bg-[color:var(--surface-elevated)]
-            flex flex-col overflow-hidden
+            flex
             isolate
             z-50 md:z-10
             transform transition-transform duration-300 ease-out
             ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
             md:translate-x-0
           `}
-        >
-          {/* Sidebar Header */}
-          <div className="flex items-center justify-between border-b border-[color:var(--border)] px-6 py-4 flex-shrink-0">
-            <h2 className="text-lg font-semibold text-[color:var(--text-primary)]">
-              {activeView === "signals" && "Signals"}
-              {activeView === "sightings" && "Sightings"}
-              {activeView === "report" && "Report a Sighting"}
-              {activeView === "geofences" && "Geofences"}
-            </h2>
-            {/* Mobile Close Button */}
-            <button
-              onClick={closeMobileSidebar}
-              className="md:hidden rounded-full p-2 text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] transition"
-              aria-label="Close sidebar"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+          >
+            <SidebarStack />
+          </div>
+        ) : (
+          /* Other Views - Original Fixed-Width Sidebar */
+          <aside
+            className={`
+              fixed md:relative
+              left-0 top-[68px] md:top-auto
+              h-[calc(100vh-68px)]
+              md:flex-1
+              w-full sm:w-96
+              md:w-96
+              border-r border-[color:var(--border)]
+              bg-[color:var(--surface-elevated)]
+              flex flex-col overflow-hidden
+              isolate
+              z-50 md:z-10
+              transform transition-transform duration-300 ease-out
+              ${mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+              md:translate-x-0
+            `}
+          >
+            {/* Sidebar Header */}
+            <div className="flex items-center justify-between border-b border-[color:var(--border)] px-6 py-4 flex-shrink-0">
+              <h2 className="text-lg font-semibold text-[color:var(--text-primary)]">
+                {activeView === "sightings" && "Sightings"}
+                {activeView === "report" && "Report a Sighting"}
+                {activeView === "geofences" && "Geofences"}
+              </h2>
+              {/* Mobile Close Button */}
+              <button
+                onClick={closeMobileSidebar}
+                className="md:hidden rounded-full p-2 text-[color:var(--text-secondary)] hover:bg-[color:var(--surface)] transition"
+                aria-label="Close sidebar"
               >
-                <path d="M18 6 6 18" />
-                <path d="m6 6 12 12" />
-              </svg>
-            </button>
-          </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </button>
+            </div>
 
-          {/* Sidebar Content - Scrollable */}
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            {/* Signals View */}
-            {activeView === "signals" && <SignalsBrowser />}
-
-            {/* Sightings View */}
-            {activeView === "sightings" && (
-              <>
-                {/* Filters Section - Fixed at top */}
-                <div className="border-b border-[color:var(--border)] p-4 space-y-4 bg-[color:var(--surface-elevated)] sticky top-0 z-10">
-                  <div>
-                    <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
-                      Categories
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        "Nature",
-                        "Public Safety",
-                        "Community",
-                        "Hazards",
-                        "Infrastructure",
-                        "Events",
-                      ].map((category) => (
-                        <button
-                          key={category}
-                          onClick={() => toggleCategory(category)}
-                          className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-                            selectedCategories.includes(category)
-                              ? "border-[color:var(--accent-primary)] bg-[color:var(--accent-primary)] text-white"
-                              : "border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"
-                          }`}
-                        >
-                          {category}
-                        </button>
-                      ))}
+            {/* Sidebar Content - Scrollable */}
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {/* Sightings View */}
+              {activeView === "sightings" && (
+                <>
+                  {/* Filters Section - Fixed at top */}
+                  <div className="border-b border-[color:var(--border)] p-4 space-y-4 bg-[color:var(--surface-elevated)] sticky top-0 z-10">
+                    <div>
+                      <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
+                        Categories
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          "Nature",
+                          "Public Safety",
+                          "Community",
+                          "Hazards",
+                          "Infrastructure",
+                          "Events",
+                        ].map((category) => (
+                          <button
+                            key={category}
+                            onClick={() => toggleCategory(category)}
+                            className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                              selectedCategories.includes(category)
+                                ? "border-[color:var(--accent-primary)] bg-[color:var(--accent-primary)] text-white"
+                                : "border-[color:var(--border)] bg-[color:var(--surface)] text-[color:var(--text-secondary)] hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"
+                            }`}
+                          >
+                            {category}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
-                      Importance
-                    </label>
-                    <select
-                      value={importanceFilter}
-                      onChange={(e) => setImportanceFilter(e.target.value)}
-                      className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--background)] px-3 py-2 text-sm text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-primary)]"
-                    >
-                      <option value="all">All levels</option>
-                      <option value="critical">Critical</option>
-                      <option value="high">High</option>
-                      <option value="normal">Normal</option>
-                      <option value="low">Low</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Sightings List - Scrollable */}
-                <div className="p-4 pb-8">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xs font-medium text-[color:var(--text-secondary)]">
-                      Nearby Signals
-                    </h3>
-                    <span className="text-xs text-[color:var(--text-tertiary)]">
-                      {filteredSightings.length} found
-                    </span>
-                  </div>
-
-                  {filteredSightings.length === 0 ? (
-                    <div className="py-8 text-center">
-                      <p className="text-sm text-[color:var(--text-secondary)]">
-                        No signals match your filters
-                      </p>
-                      <button
-                        onClick={() => {
-                          setSelectedCategories([]);
-                          setImportanceFilter("all");
-                        }}
-                        className="mt-2 text-xs font-medium text-[color:var(--accent-primary)] hover:underline"
+                    <div>
+                      <label className="block text-xs font-medium text-[color:var(--text-secondary)] mb-2">
+                        Importance
+                      </label>
+                      <select
+                        value={importanceFilter}
+                        onChange={(e) => setImportanceFilter(e.target.value)}
+                        className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--background)] px-3 py-2 text-sm text-[color:var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--accent-primary)]"
                       >
-                        Clear filters
-                      </button>
+                        <option value="all">All levels</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="normal">Normal</option>
+                        <option value="low">Low</option>
+                      </select>
                     </div>
-                  ) : (
-                    <div className="space-y-2">
-                      {filteredSightings.map((sighting) => (
-                        <div
-                          key={sighting.id}
+                  </div>
+
+                  {/* Sightings List - Scrollable */}
+                  <div className="p-4 pb-8">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-medium text-[color:var(--text-secondary)]">
+                        Nearby Signals
+                      </h3>
+                      <span className="text-xs text-[color:var(--text-tertiary)]">
+                        {filteredSightings.length} found
+                      </span>
+                    </div>
+
+                    {filteredSightings.length === 0 ? (
+                      <div className="py-8 text-center">
+                        <p className="text-sm text-[color:var(--text-secondary)]">
+                          No signals match your filters
+                        </p>
+                        <button
                           onClick={() => {
-                            dispatchEvent(EVENTS.sightingSelected, {
-                              id: sighting.id,
-                              title: sighting.title,
-                              category: sighting.category,
-                              description: sighting.description,
-                              location: sighting.location,
-                            });
+                            setSelectedCategories([]);
+                            setImportanceFilter("all");
                           }}
-                          className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-3 hover:bg-[color:var(--surface-elevated)] transition cursor-pointer"
+                          className="mt-2 text-xs font-medium text-[color:var(--accent-primary)] hover:underline"
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-[color:var(--text-primary)] truncate">
-                                {sighting.title}
-                              </p>
-                              <p className="text-xs text-[color:var(--text-secondary)] mt-1">
-                                {sighting.category} • {sighting.type}
-                              </p>
-                              <p className="text-xs text-[color:var(--text-tertiary)] mt-1">
-                                {sighting.observedAtLabel}
-                              </p>
+                          Clear filters
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {filteredSightings.map((sighting) => (
+                          <div
+                            key={sighting.id}
+                            onClick={() => {
+                              dispatchEvent(EVENTS.sightingSelected, {
+                                id: sighting.id,
+                                title: sighting.title,
+                                category: sighting.category,
+                                description: sighting.description,
+                                location: sighting.location,
+                              });
+                            }}
+                            className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] p-3 hover:bg-[color:var(--surface-elevated)] transition cursor-pointer"
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-[color:var(--text-primary)] truncate">
+                                  {sighting.title}
+                                </p>
+                                <p className="text-xs text-[color:var(--text-secondary)] mt-1">
+                                  {sighting.category} • {sighting.type}
+                                </p>
+                                <p className="text-xs text-[color:var(--text-tertiary)] mt-1">
+                                  {sighting.observedAtLabel}
+                                </p>
+                              </div>
+                              <div
+                                className={`flex-shrink-0 w-2 h-2 rounded-full ${
+                                  sighting.importance === "critical"
+                                    ? "bg-[color:var(--accent-danger)]"
+                                    : sighting.importance === "high"
+                                      ? "bg-[color:var(--accent-warning)]"
+                                      : sighting.importance === "low"
+                                        ? "bg-[color:var(--accent-success)]"
+                                        : "bg-[color:var(--text-tertiary)]"
+                                }`}
+                              />
                             </div>
-                            <div
-                              className={`flex-shrink-0 w-2 h-2 rounded-full ${
-                                sighting.importance === "critical"
-                                  ? "bg-[color:var(--accent-danger)]"
-                                  : sighting.importance === "high"
-                                    ? "bg-[color:var(--accent-warning)]"
-                                    : sighting.importance === "low"
-                                      ? "bg-[color:var(--accent-success)]"
-                                      : "bg-[color:var(--text-tertiary)]"
-                              }`}
-                            />
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* Report View */}
+              {activeView === "report" && (
+                <div className="p-4 sm:p-6 pb-8">
+                  <ReportForm />
                 </div>
-              </>
-            )}
+              )}
 
-            {/* Report View */}
-            {activeView === "report" && (
-              <div className="p-4 sm:p-6 pb-8">
-                <ReportForm />
-              </div>
-            )}
-
-            {/* Geofences View */}
-            {activeView === "geofences" && (
-              <div className="p-4 sm:p-6 pb-8">
-                <ClientGeofenceStudio />
-              </div>
-            )}
-          </div>
-        </aside>
+              {/* Geofences View */}
+              {activeView === "geofences" && (
+                <div className="p-4 sm:p-6 pb-8">
+                  <ClientGeofenceStudio />
+                </div>
+              )}
+            </div>
+          </aside>
+        )}
 
         {/* Map Area */}
         <div className="relative flex-1 overflow-hidden isolate z-0">

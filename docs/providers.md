@@ -15,4 +15,4 @@
 - All of the above can be swapped behind the repository ports.
 - Please verify pricing, rate limits, and feature status before committing.
 - Local development currently uses the file-backed adapters under `.local/`.
-- The Postgres adapter expects `SIGHTSIGNAL_DATABASE_URL` and the tables in `db/schema.sql`.
+- The Postgres adapter expects `SignalFeed_DATABASE_URL` and the tables in `db/schema.sql`.

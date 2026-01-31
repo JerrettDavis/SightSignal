@@ -1,8 +1,9 @@
-# Contributing to SightSignal
+# Contributing to SignalFeed
 
-Thank you for your interest in contributing to SightSignal! We welcome contributions from the community and are grateful for any help you can provide.
+Thank you for your interest in contributing to SignalFeed! We welcome contributions from the community and are grateful for any help you can provide.
 
 ## Table of Contents
+
 - [Getting Started](#getting-started)
 - [Development Setup](#development-setup)
 - [Commit Guidelines](#commit-guidelines)
@@ -18,12 +19,12 @@ Thank you for your interest in contributing to SightSignal! We welcome contribut
 1. **Fork the repository** on GitHub
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/sightsignal.git
-   cd sightsignal
+   git clone https://github.com/YOUR_USERNAME/signalfeed.git
+   cd signalfeed
    ```
 3. **Add upstream remote**:
    ```bash
-   git remote add upstream https://github.com/your-org/sightsignal.git
+   git remote add upstream https://github.com/your-org/signalfeed.git
    ```
 4. **Create a feature branch**:
    ```bash
@@ -33,6 +34,7 @@ Thank you for your interest in contributing to SightSignal! We welcome contribut
 ### Sync Your Fork
 
 Before starting work, sync your fork with upstream:
+
 ```bash
 git fetch upstream
 git checkout main
@@ -51,14 +53,17 @@ git merge upstream/main
 ### Quick Start
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Start development server** (with file-based storage):
+
    ```bash
    npm run dev
    ```
+
    The app will be available at `http://localhost:3000`
 
 3. **Start with PostgreSQL** (recommended):
@@ -73,13 +78,13 @@ Create a `.env.local` file for local configuration:
 
 ```env
 # Data storage: 'file', 'memory', or 'postgres'
-SIGHTSIGNAL_DATA_STORE=file
+SIGNALFEED_DATA_STORE=file
 
 # Directory for file-based storage (default: .local)
-SIGHTSIGNAL_DATA_DIR=.local
+SIGNALFEED_DATA_DIR=.local
 
 # PostgreSQL connection (when using postgres storage)
-SIGHTSIGNAL_DATABASE_URL=postgresql://sightsignal:local@localhost:5432/sightsignal
+SIGNALFEED_DATABASE_URL=postgresql://signalfeed:local@localhost:5432/signalfeed
 
 # MapLibre style URL
 NEXT_PUBLIC_MAP_STYLE_URL=/map-style.json
@@ -88,16 +93,19 @@ NEXT_PUBLIC_MAP_STYLE_URL=/map-style.json
 ### Docker Development
 
 For a fully containerized environment:
+
 ```bash
 npm run dev:compose
 ```
 
 To stop:
+
 ```bash
 npm run dev:compose:down
 ```
 
 To reset (removes volumes):
+
 ```bash
 npm run dev:compose:reset
 ```
@@ -160,13 +168,14 @@ and clarified required fields.
 - Use imperative mood ("move cursor to..." not "moves cursor to...")
 - Limit first line to 72 characters
 - Reference issues and PRs in the footer
-- Explain *what* and *why* in the body, not *how*
+- Explain _what_ and _why_ in the body, not _how_
 
 ## Pull Request Process
 
 ### Before Submitting
 
 1. **Ensure all tests pass**:
+
    ```bash
    npm run test          # Unit tests
    npm run e2e           # End-to-end tests
@@ -244,24 +253,19 @@ npm run e2e:postgres
 - Test both happy paths and error cases
 
 Example unit test:
-```typescript
-import { describe, it, expect } from 'vitest';
-import { calculateDistance } from './distance';
 
-describe('calculateDistance', () => {
-  it('should calculate distance between two points', () => {
-    const result = calculateDistance(
-      { lat: 0, lng: 0 },
-      { lat: 1, lng: 1 }
-    );
+```typescript
+import { describe, it, expect } from "vitest";
+import { calculateDistance } from "./distance";
+
+describe("calculateDistance", () => {
+  it("should calculate distance between two points", () => {
+    const result = calculateDistance({ lat: 0, lng: 0 }, { lat: 1, lng: 1 });
     expect(result).toBeGreaterThan(0);
   });
 
-  it('should return 0 for same point', () => {
-    const result = calculateDistance(
-      { lat: 0, lng: 0 },
-      { lat: 0, lng: 0 }
-    );
+  it("should return 0 for same point", () => {
+    const result = calculateDistance({ lat: 0, lng: 0 }, { lat: 0, lng: 0 });
     expect(result).toBe(0);
   });
 });
@@ -290,6 +294,7 @@ npm run format
 ```
 
 Configuration files:
+
 - `.eslintrc.json` or `eslint.config.mjs` for ESLint
 - `.prettierrc` for Prettier
 
@@ -321,7 +326,7 @@ src/
 
 ### Architecture Overview
 
-SightSignal follows **Clean Architecture** principles:
+SignalFeed follows **Clean Architecture** principles:
 
 1. **Domain Layer** (`src/domain/`): Core business entities and rules
    - No external dependencies
@@ -384,4 +389,4 @@ Please note that this project is released with a Contributor Code of Conduct. By
 
 ## License
 
-By contributing to SightSignal, you agree that your contributions will be licensed under the MIT License.
+By contributing to SignalFeed, you agree that your contributions will be licensed under the MIT License.

@@ -1,8 +1,8 @@
-# SightSignal Vision
+# SignalFeed Vision
 
 ## Purpose
 
-SightSignal lets people place and discover real-time signals on a map, from hazards to community events, with a focus on fast reporting, trust, and low friction.
+SignalFeed lets people place and discover real-time signals on a map, from hazards to community events, with a focus on fast reporting, trust, and low friction.
 
 ## Product principles
 

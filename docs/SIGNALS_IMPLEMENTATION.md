@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Signals domain has been successfully implemented as a complete, production-ready domain model following the established patterns in the SightSignal codebase. This document provides an overview of the implementation.
+The Signals domain has been successfully implemented as a complete, production-ready domain model following the established patterns in the SignalFeed codebase. This document provides an overview of the implementation.
 
 ## Implementation Date
 
