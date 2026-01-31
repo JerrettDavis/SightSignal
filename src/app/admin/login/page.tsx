@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
@@ -9,6 +9,27 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  // Check if user is already authenticated as admin
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/admin/auth/verify");
+        if (response.ok) {
+          // Already authenticated, redirect to admin dashboard
+          router.push("/admin");
+          return;
+        }
+      } catch {
+        // Not authenticated, show login form
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    void checkAuth();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +58,20 @@ export default function AdminLoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading state while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-[color:var(--background)]">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[color:var(--accent-primary)] border-r-transparent"></div>
+          <p className="mt-4 text-sm text-[color:var(--text-secondary)]">
+            Checking authentication...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[color:var(--background)]">
