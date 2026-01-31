@@ -139,10 +139,20 @@ export default function Home() {
           setUserEmail(data.data.user.email);
 
           // Load user settings for Follow Me mode
-          const settingsResponse = await fetch("/api/users/settings");
-          if (settingsResponse.ok) {
-            const settingsData = await settingsResponse.json();
-            setFollowMeEnabled(settingsData.data.settings.followMeMode);
+          try {
+            const settingsResponse = await fetch("/api/users/settings");
+            if (settingsResponse.ok) {
+              const settingsData = await settingsResponse.json();
+              console.log("[Page] Settings response:", settingsData);
+              // Handle both response structures
+              const settings = settingsData.data?.settings || settingsData.data;
+              if (settings?.followMeMode !== undefined) {
+                setFollowMeEnabled(settings.followMeMode);
+              }
+            }
+          } catch (settingsError) {
+            console.error("[Page] Failed to load settings:", settingsError);
+            // Don't fail auth if settings fail
           }
         } else {
           console.log("[Page] User not authenticated");

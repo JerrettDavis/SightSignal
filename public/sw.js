@@ -36,8 +36,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
-  // Skip caching for non-http(s) requests (chrome-extension, etc.)
-  if (!request.url.startsWith("http")) {
+  // Skip caching for:
+  // 1. Non-http(s) requests (chrome-extension, etc.)
+  // 2. Non-GET requests (POST, PUT, DELETE, PATCH)
+  if (!request.url.startsWith("http") || request.method !== "GET") {
     return;
   }
 
