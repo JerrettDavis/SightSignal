@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSignalNavigation } from "@/stores/signalNavigationStore";
+import { dispatchEvent, EVENTS } from "@/shared/events";
 import {
   ArrowLeft,
   MapPin,
@@ -172,10 +173,24 @@ export default function SightingDetailSidebar({
 
         {/* Actions */}
         <div className="border-t border-[color:var(--border)] pt-4 space-y-2">
-          <button className="w-full px-4 py-2 bg-[color:var(--accent-primary)] text-white rounded hover:bg-[color:var(--accent-hover)]">
+          <button
+            onClick={() => {
+              if (sighting) {
+                dispatchEvent(EVENTS.sightingSelected, {
+                  id: sighting.id,
+                  title: sighting.description,
+                  category: "unknown", // API doesn't return category
+                  description: sighting.details || sighting.description,
+                  location: sighting.location,
+                  timestamp: sighting.observedAt,
+                });
+              }
+            }}
+            className="w-full px-4 py-2 bg-[color:var(--accent-primary)] text-white rounded hover:bg-[color:var(--accent-hover)] transition"
+          >
             View on Map
           </button>
-          <button className="w-full px-4 py-2 border border-[color:var(--border)] rounded hover:bg-[color:var(--surface)]">
+          <button className="w-full px-4 py-2 border border-[color:var(--border)] rounded hover:bg-[color:var(--surface)] transition text-[color:var(--text-primary)]">
             Share
           </button>
         </div>
