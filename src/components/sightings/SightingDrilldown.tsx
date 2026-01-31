@@ -5,6 +5,7 @@ import type { SightingResponse } from "@/contracts/sighting";
 import { ReactionButtons } from "./ReactionButtons";
 import { CommentThread } from "./CommentThread";
 import { categoryLabelById, typeLabelById } from "@/data/taxonomy";
+import { cacheSighting } from "@/shared/offline-storage";
 
 interface SightingDrilldownProps {
   sightingId: string | null;
@@ -37,8 +38,13 @@ export function SightingDrilldown({
         }
         const data = await response.json();
         setSighting(data.data);
+
+        // Cache the sighting for offline access
+        await cacheSighting(sightingId, data.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load sighting");
+        setError(
+          err instanceof Error ? err.message : "Failed to load sighting"
+        );
       } finally {
         setLoading(false);
       }

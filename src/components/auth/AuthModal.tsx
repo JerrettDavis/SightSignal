@@ -172,14 +172,6 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </p>
               </div>
 
-              <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--surface-elevated)] p-4">
-                <p className="text-xs text-[color:var(--text-tertiary)]">
-                  💡 <strong>Development Mode:</strong> Check your
-                  terminal/console for the magic link. In production,
-                  you&apos;ll receive an email.
-                </p>
-              </div>
-
               <button
                 onClick={handleClose}
                 className="w-full rounded-lg border border-[color:var(--border)] bg-[color:var(--surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-secondary)] transition hover:bg-[color:var(--surface-elevated)] hover:text-[color:var(--text-primary)]"

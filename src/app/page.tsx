@@ -11,11 +11,14 @@ import { AuthModal } from "@/components/auth/AuthModal";
 import { UserDropdown } from "@/components/auth/UserDropdown";
 import { PushNotificationManager } from "@/components/push/PushNotificationManager";
 import { UserLocationTracker } from "@/components/location/UserLocationTracker";
+import { OfflineIndicator } from "@/components/offline/OfflineIndicator";
 import { SightingSchema } from "@/contracts/sighting";
 import type { SightingCard } from "@/data/mock-sightings";
 import { categoryLabelById, typeLabelById } from "@/data/taxonomy";
 import { EVENTS, dispatchEvent } from "@/shared/events";
 import { getCookie, setCookie } from "@/shared/client-cookies";
+import { useOnlineStatus } from "@/hooks/useOnlineStatus";
+import { cacheSightings, getCachedSightings } from "@/shared/offline-storage";
 import type { z } from "zod";
 
 type View = "signals" | "sightings" | "report" | "geofences" | null;
@@ -72,14 +75,35 @@ export default function Home() {
 
   const loadSightings = useCallback(async () => {
     try {
+      // Try online first
       const response = await fetch("/api/sightings");
-      if (!response.ok) return;
+      if (!response.ok) {
+        // Fall back to cache if offline
+        console.log("[Page] Failed to load sightings online, using cache");
+        const cached = (await getCachedSightings()) as z.infer<
+          typeof SightingSchema
+        >[];
+        setSightings(cached.map(toCard));
+        return;
+      }
       const data = (await response.json()) as ApiResponse<unknown>;
       const parsed = SightingSchema.array().safeParse(data.data);
       if (!parsed.success) return;
+
+      // Cache successful response
+      await cacheSightings(parsed.data);
       setSightings(parsed.data.map(toCard));
-    } catch {
-      // Silent fail
+    } catch (error) {
+      // If network error, try cache
+      console.log("[Page] Network error, loading from cache", error);
+      try {
+        const cached = (await getCachedSightings()) as z.infer<
+          typeof SightingSchema
+        >[];
+        setSightings(cached.map(toCard));
+      } catch {
+        console.error("[Page] Failed to load from cache");
+      }
     }
   }, []);
 
@@ -286,6 +310,7 @@ export default function Home() {
         userId={userId}
         followMeEnabled={followMeEnabled}
       />
+      <OfflineIndicator />
       {/* Top Bar */}
       <header className="relative flex items-center justify-between border-b border-[color:var(--border)] bg-[color:var(--surface-elevated)] px-4 py-3 shadow-[var(--shadow-sm)] z-30 flex-shrink-0">
         <div className="flex items-center gap-3">
