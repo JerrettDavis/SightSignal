@@ -232,7 +232,7 @@ export default function Home() {
       const settingsResponse = await fetch("/api/users/settings");
       if (settingsResponse.ok) {
         const settingsData = await settingsResponse.json();
-        setFollowMeEnabled(settingsData.data.settings.followMeMode);
+        setFollowMeEnabled(settingsData.settings.followMeMode);
       }
     } catch (error) {
       console.error("Failed to load user settings:", error);
