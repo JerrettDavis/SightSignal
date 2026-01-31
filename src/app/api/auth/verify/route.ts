@@ -3,6 +3,7 @@ import {
   getMagicLinkRepository,
 } from "@/adapters/repositories/repository-factory";
 import { createSession, generateSessionToken } from "@/domain/auth/auth";
+import { createUser, UserId } from "@/domain/users/user";
 import {
   jsonBadRequest,
   jsonOk,
@@ -36,13 +37,21 @@ export const GET = async (request: Request) => {
     // Get or create user
     let user = await userRepo.getByEmail(email);
     if (!user) {
-      // Create new user
-      user = await userRepo.create({
+      // Create new user using domain function
+      const userId =
+        `user-${Date.now()}-${Math.random().toString(36).substring(2, 9)}` as UserId;
+      const userResult = createUser(userId, {
         email,
-        username: email.split("@")[0], // Use email prefix as default username
         role: "user",
         status: "active",
       });
+
+      if (!userResult.ok) {
+        return jsonBadRequest(userResult.error.message);
+      }
+
+      await userRepo.create(userResult.value);
+      user = userResult.value;
     }
 
     // Delete used token

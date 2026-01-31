@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
-import { cookies } from "next/headers";
 
 const isAuthEnabled = (): boolean => {
   return process.env.ADMIN_AUTH_ENABLED !== "false";

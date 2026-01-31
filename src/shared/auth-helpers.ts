@@ -32,7 +32,13 @@ export const requireAuth = async (): Promise<TokenPayload> => {
   }
 
   // Return a TokenPayload-compatible object
+  // For session-based admin access, we use the email/username as a placeholder ID
+  const userId = (accessResult.username ||
+    accessResult.email ||
+    "admin") as AdminUserId;
+
   return {
+    userId,
     username: accessResult.username || accessResult.email || "admin",
   };
 };
