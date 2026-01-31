@@ -341,13 +341,13 @@ export default function Home() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/jdh-logo.png"
-              alt="SightSignal Logo"
+              alt="SignalFeed Logo"
               className="h-full w-full object-contain"
             />
           </div>
           <div>
             <h1 className="text-sm font-semibold text-[color:var(--text-primary)]">
-              SightSignal
+              SignalFeed
             </h1>
             <p className="text-xs text-[color:var(--text-tertiary)]">
               Local intelligence
@@ -793,7 +793,7 @@ export default function Home() {
             <div className="absolute right-4 top-4 max-w-sm rounded-xl bg-[color:var(--surface-elevated)] p-4 shadow-[var(--shadow-md)] z-10 border border-[color:var(--border)]">
               <div className="flex items-start justify-between gap-2">
                 <h2 className="text-base font-semibold text-[color:var(--text-primary)]">
-                  Welcome to SightSignal
+                  Welcome to SignalFeed
                 </h2>
                 <button
                   onClick={dismissWelcome}
