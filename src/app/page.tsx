@@ -126,10 +126,14 @@ export default function Home() {
     };
 
     const checkAuthStatus = async () => {
+      console.log("[Page] Checking auth status...");
       try {
         const response = await fetch("/api/auth/me");
+        console.log("[Page] Auth check response:", response.status);
+
         if (response.ok) {
           const data = await response.json();
+          console.log("[Page] User authenticated:", data.data.user.email);
           setIsLoggedIn(true);
           setUserId(data.data.user.id);
           setUserEmail(data.data.user.email);
@@ -141,11 +145,13 @@ export default function Home() {
             setFollowMeEnabled(settingsData.data.settings.followMeMode);
           }
         } else {
+          console.log("[Page] User not authenticated");
           setIsLoggedIn(false);
           setUserId(undefined);
           setUserEmail(undefined);
         }
-      } catch {
+      } catch (error) {
+        console.error("[Page] Auth check failed:", error);
         setIsLoggedIn(false);
         setUserId(undefined);
         setUserEmail(undefined);
