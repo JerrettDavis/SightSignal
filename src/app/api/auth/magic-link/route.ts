@@ -53,7 +53,23 @@ export const POST = async (request: Request) => {
     const token = await magicLinkRepo.create(email);
 
     // Generate magic link URL
-    const magicLink = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/auth/verify?token=${token.token}`;
+    // Vercel provides VERCEL_URL, but we need to add https:// and handle localhost
+    const getBaseUrl = () => {
+      // 1. Check for explicit URL override
+      if (process.env.NEXT_PUBLIC_APP_URL) {
+        return process.env.NEXT_PUBLIC_APP_URL;
+      }
+
+      // 2. In production (Vercel), use VERCEL_URL
+      if (process.env.VERCEL_URL) {
+        return `https://${process.env.VERCEL_URL}`;
+      }
+
+      // 3. Fall back to localhost for development
+      return "http://localhost:3000";
+    };
+
+    const magicLink = `${getBaseUrl()}/auth/verify?token=${token.token}`;
 
     // In development, log the magic link to console
     if (process.env.NODE_ENV === "development") {
