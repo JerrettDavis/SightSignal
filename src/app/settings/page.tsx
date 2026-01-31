@@ -3,25 +3,42 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+interface Settings {
+  notificationsEnabled: boolean;
+  locationSharingEnabled: boolean;
+  followMeMode: boolean;
+  publicProfile: boolean;
+  theme: "light" | "dark" | "auto";
+  mapStyle: "standard" | "satellite" | "terrain";
+}
+
 export default function SettingsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [settings, setSettings] = useState<Settings>({
+    notificationsEnabled: false,
+    locationSharingEnabled: false,
+    followMeMode: false,
+    publicProfile: true,
+    theme: "auto",
+    mapStyle: "standard",
+  });
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const loadData = async () => {
       try {
-        const response = await fetch("/api/auth/me");
-        if (!response.ok) {
+        const authResponse = await fetch("/api/auth/me");
+        if (!authResponse.ok) {
           router.push("/");
           return;
         }
 
-        // Check notification status
-        if ("serviceWorker" in navigator && "PushManager" in window) {
-          const registration = await navigator.serviceWorker.ready;
-          const subscription = await registration.pushManager.getSubscription();
-          setNotificationsEnabled(!!subscription);
+        // Load settings from backend
+        const settingsResponse = await fetch("/api/users/settings");
+        if (settingsResponse.ok) {
+          const data = await settingsResponse.json();
+          setSettings(data.data.settings);
         }
       } catch {
         router.push("/");
@@ -29,7 +46,7 @@ export default function SettingsPage() {
         setLoading(false);
       }
     };
-    checkAuth();
+    loadData();
   }, [router]);
 
   const updateSetting = async (
