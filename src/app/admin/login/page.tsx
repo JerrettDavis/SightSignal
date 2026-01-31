@@ -14,14 +14,27 @@ export default function AdminLoginPage() {
   // Check if user is already authenticated as admin
   useEffect(() => {
     const checkAuth = async () => {
+      console.log("[Admin Login] Checking auth status...");
       try {
         const response = await fetch("/api/admin/auth/verify");
+        console.log(
+          "[Admin Login] Auth response:",
+          response.status,
+          response.ok
+        );
+
         if (response.ok) {
+          console.log(
+            "[Admin Login] User is authenticated, redirecting to /admin"
+          );
           // Already authenticated, redirect to admin dashboard
           router.push("/admin");
           return;
         }
-      } catch {
+
+        console.log("[Admin Login] Not authenticated, showing login form");
+      } catch (error) {
+        console.log("[Admin Login] Auth check failed:", error);
         // Not authenticated, show login form
       } finally {
         setIsCheckingAuth(false);

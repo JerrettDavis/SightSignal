@@ -39,7 +39,11 @@ export const requireAuth = async (): Promise<TokenPayload> => {
  */
 export const isAdminEmail = (email: string): boolean => {
   const adminAccounts = process.env.ADMIN_ACCOUNTS || "";
+  console.log("[isAdminEmail] Checking email:", email);
+  console.log("[isAdminEmail] ADMIN_ACCOUNTS env:", adminAccounts);
+
   if (!adminAccounts) {
+    console.log("[isAdminEmail] No ADMIN_ACCOUNTS configured");
     return false;
   }
 
@@ -48,7 +52,11 @@ export const isAdminEmail = (email: string): boolean => {
     .map((e) => e.trim().toLowerCase())
     .filter((e) => e.length > 0);
 
-  return adminEmails.includes(email.toLowerCase());
+  console.log("[isAdminEmail] Admin emails list:", adminEmails);
+  const isAdmin = adminEmails.includes(email.toLowerCase());
+  console.log("[isAdminEmail] Is admin?", isAdmin);
+
+  return isAdmin;
 };
 
 /**
@@ -60,33 +68,45 @@ export const getAdminAccess = async (): Promise<{
   username: string | null;
   email?: string;
 }> => {
+  console.log("[getAdminAccess] Starting admin access check...");
+
   // First, check for admin token (credential-based login)
   const adminToken = await getAuthToken();
   if (adminToken) {
+    console.log("[getAdminAccess] Admin token found:", adminToken.username);
     return {
       isAdmin: true,
       username: adminToken.username,
     };
   }
 
+  console.log("[getAdminAccess] No admin token, checking user session...");
+
   // Second, check for regular user session with admin email
   const cookieStore = await cookies();
   const sessionData = cookieStore.get("session_data");
 
   if (!sessionData) {
+    console.log("[getAdminAccess] No session data found");
     return { isAdmin: false, username: null };
   }
 
   try {
     const session = JSON.parse(sessionData.value);
+    console.log("[getAdminAccess] Session found:", {
+      email: session.email,
+      expiresAt: session.expiresAt,
+    });
 
     // Check if session expired
     if (new Date(session.expiresAt) < new Date()) {
+      console.log("[getAdminAccess] Session expired");
       return { isAdmin: false, username: null };
     }
 
     // Check if user's email is in admin list
     if (session.email && isAdminEmail(session.email)) {
+      console.log("[getAdminAccess] Email is in admin list:", session.email);
       return {
         isAdmin: true,
         username: session.username || session.email,
@@ -94,8 +114,10 @@ export const getAdminAccess = async (): Promise<{
       };
     }
 
+    console.log("[getAdminAccess] Email not in admin list:", session.email);
     return { isAdmin: false, username: null };
-  } catch {
+  } catch (error) {
+    console.log("[getAdminAccess] Error parsing session:", error);
     return { isAdmin: false, username: null };
   }
 };
