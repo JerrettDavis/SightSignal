@@ -144,10 +144,9 @@ export default function Home() {
             if (settingsResponse.ok) {
               const settingsData = await settingsResponse.json();
               console.log("[Page] Settings response:", settingsData);
-              // Handle both response structures
-              const settings = settingsData.data?.settings || settingsData.data;
-              if (settings?.followMeMode !== undefined) {
-                setFollowMeEnabled(settings.followMeMode);
+              // Settings API returns { settings: {...} } directly
+              if (settingsData.settings?.followMeMode !== undefined) {
+                setFollowMeEnabled(settingsData.settings.followMeMode);
               }
             }
           } catch (settingsError) {
