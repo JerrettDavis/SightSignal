@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
@@ -10,9 +10,15 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const hasRedirected = useRef(false);
 
   // Check if user is already authenticated as admin
   useEffect(() => {
+    // Prevent multiple redirects
+    if (hasRedirected.current) {
+      return;
+    }
+
     const checkAuth = async () => {
       console.log("[Admin Login] Checking auth status...");
       try {
@@ -27,9 +33,10 @@ export default function AdminLoginPage() {
           console.log(
             "[Admin Login] User is authenticated, redirecting to /admin"
           );
-          // Already authenticated, redirect to admin dashboard
-          // Use window.location for hard redirect
-          window.location.href = "/admin";
+          // Mark that we've redirected
+          hasRedirected.current = true;
+          // Use router.replace instead of window.location
+          router.replace("/admin");
           return;
         }
 
