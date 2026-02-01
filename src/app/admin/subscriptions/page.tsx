@@ -22,7 +22,10 @@ const formatTarget = (target: SubscriptionTarget): string => {
   if (target.kind === "geofence") {
     return `Geofence: ${target.geofenceId}`;
   }
-  return `Custom polygon (${target.polygon.points.length} points)`;
+  if (target.kind === "polygon" && target.polygon?.points) {
+    return `Custom polygon (${target.polygon.points.length} points)`;
+  }
+  return "Unknown target";
 };
 
 export default function AdminSubscriptions() {
