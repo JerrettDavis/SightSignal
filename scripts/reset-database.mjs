@@ -52,11 +52,15 @@ function loadEnv() {
 loadEnv();
 
 // Get database URL from environment
-const databaseUrl = process.env.SIGHTSIGNAL_DATABASE_URL;
+const databaseUrl = 
+  process.env.SIGNALFEED_DATABASE_URL ??
+  process.env.SIGHTSIGNAL_DATABASE_URL ??
+  process.env.DATABASE_URL ??
+  process.env.POSTGRES_URL;
 
 if (!databaseUrl) {
-  console.error('❌ SIGHTSIGNAL_DATABASE_URL environment variable is not set');
-  console.error('   Please set it to your PostgreSQL connection string');
+  console.error('❌ No database URL found');
+  console.error('   Please set SIGNALFEED_DATABASE_URL, DATABASE_URL, or POSTGRES_URL');
   process.exit(1);
 }
 
