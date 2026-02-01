@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { MetricCard } from "@/components/admin/MetricCard";
 
@@ -18,16 +19,19 @@ export default function AdminDashboard() {
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const pathname = usePathname();
 
   console.log("[Admin Dashboard] Component mounted");
 
   useEffect(() => {
-    console.log("[Admin Dashboard] useEffect running");
+    console.log("[Admin Dashboard] useEffect running, pathname:", pathname);
     const fetchMetrics = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch("/api/admin/metrics");
+        const response = await fetch("/api/admin/metrics", {
+          cache: "no-store", // Disable Next.js caching
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch metrics: ${response.status}`);
@@ -44,7 +48,7 @@ export default function AdminDashboard() {
     };
 
     void fetchMetrics();
-  }, []);
+  }, [pathname]); // Re-fetch when pathname changes
 
   return (
     <AdminLayout>

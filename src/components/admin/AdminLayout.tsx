@@ -60,11 +60,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             {/* Logo and Title */}
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[color:var(--accent-primary)] text-base font-bold text-white">
-                SS
+                SF
               </div>
               <div>
                 <h1 className="text-base font-semibold text-[color:var(--text-primary)]">
-                  SightSignal Admin
+                  SignalFeed Admin
                 </h1>
                 <p className="text-xs text-[color:var(--text-tertiary)]">
                   Management Dashboard
