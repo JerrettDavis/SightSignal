@@ -21,16 +21,18 @@ export const GET = async () => {
     subscriptionRepo.list(),
   ]);
 
-  return jsonOk({
+  const metrics = {
     totalSightings: allSightings.length,
     activeSightings: allSightings.filter((s) => s.status === "active").length,
     resolvedSightings: allSightings.filter((s) => s.status === "resolved")
       .length,
-    criticalSightings: allSightings.filter((s) => s.importance === "critical")
+    criticalAlerts: allSightings.filter((s) => s.importance === "critical")
       .length,
-    totalGeofences: allGeofences.length,
+    geofences: allGeofences.length,
     publicGeofences: allGeofences.filter((g) => g.visibility === "public")
       .length,
-    totalSubscriptions: allSubscriptions.length,
-  });
+    subscriptions: allSubscriptions.length,
+  };
+
+  return jsonOk(metrics);
 };

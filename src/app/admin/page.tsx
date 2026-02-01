@@ -55,7 +55,7 @@ export default function AdminDashboard() {
             Dashboard
           </h2>
           <p className="mt-1 text-sm text-[color:var(--text-secondary)]">
-            Overview of your SightSignal platform
+            Overview of your SignalFeed platform
           </p>
         </div>
 
