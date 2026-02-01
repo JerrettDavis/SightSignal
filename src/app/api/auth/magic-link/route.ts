@@ -53,19 +53,24 @@ export const POST = async (request: Request) => {
     const token = await magicLinkRepo.create(email);
 
     // Generate magic link URL
-    // Vercel provides VERCEL_URL, but we need to add https:// and handle localhost
+    // Use custom domain in production, fall back to VERCEL_URL or localhost
     const getBaseUrl = () => {
       // 1. Check for explicit URL override
       if (process.env.NEXT_PUBLIC_APP_URL) {
         return process.env.NEXT_PUBLIC_APP_URL;
       }
 
-      // 2. In production (Vercel), use VERCEL_URL
+      // 2. In production (Vercel), prefer custom domain
+      if (process.env.VERCEL_ENV === "production") {
+        return "https://www.signalfeed.app";
+      }
+
+      // 3. Preview deployments use VERCEL_URL
       if (process.env.VERCEL_URL) {
         return `https://${process.env.VERCEL_URL}`;
       }
 
-      // 3. Fall back to localhost for development
+      // 4. Fall back to localhost for development
       return "http://localhost:3000";
     };
 
@@ -92,7 +97,7 @@ export const POST = async (request: Request) => {
     const { html, text } = generateMagicLinkEmail(magicLink, 15);
     const emailResult = await sendEmail({
       to: email,
-      subject: "Sign in to SightSignal",
+      subject: "Sign in to SignalFeed",
       html,
       text,
     });
