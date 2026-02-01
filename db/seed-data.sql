@@ -125,9 +125,15 @@ VALUES
    '{}',
    ARRAY['new_sighting'],
    'user-001', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
--- Downtown Emergency Signal
+-- Downtown Emergency Signal  
 INSERT INTO signals (id, name, description, target, conditions, triggers, owner_id, is_active, created_at, updated_at)
 VALUES
   ('signal-001', 'Downtown Emergencies', 'Critical events in downtown district',
@@ -135,7 +141,13 @@ VALUES
    '{"categoryIds":["cat-emergency"],"importance":"high"}',
    ARRAY['new_sighting'],
    'user-001', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
 -- Harbor Area Activities
 INSERT INTO signals (id, name, description, target, conditions, triggers, owner_id, is_active, created_at, updated_at)
@@ -145,7 +157,13 @@ VALUES
    '{}',
    ARRAY['new_sighting'],
    'user-001', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
 -- Campus Events Signal
 INSERT INTO signals (id, name, description, target, conditions, triggers, owner_id, is_active, created_at, updated_at)
@@ -155,7 +173,13 @@ VALUES
    '{"categoryIds":["cat-community"]}',
    ARRAY['new_sighting'],
    'user-001', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
 -- Traffic Alerts Signal
 INSERT INTO signals (id, name, description, target, conditions, triggers, owner_id, is_active, created_at, updated_at)
@@ -165,7 +189,13 @@ VALUES
    '{"categoryIds":["cat-traffic"],"importance":"high"}',
    ARRAY['new_sighting'],
    'user-002', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
 -- Wildlife Watchers Signal
 INSERT INTO signals (id, name, description, target, conditions, triggers, owner_id, is_active, created_at, updated_at)
@@ -175,7 +205,13 @@ VALUES
    '{"categoryIds":["cat-wildlife"]}',
    ARRAY['new_sighting'],
    'user-002', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
 -- Critical Infrastructure Issues
 INSERT INTO signals (id, name, description, target, conditions, triggers, owner_id, is_active, created_at, updated_at)
@@ -185,7 +221,13 @@ VALUES
    '{"categoryIds":["cat-infrastructure"],"importance":"high"}',
    ARRAY['new_sighting'],
    'user-001', true, NOW(), NOW())
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  target = EXCLUDED.target,
+  conditions = EXCLUDED.conditions,
+  triggers = EXCLUDED.triggers,
+  is_active = EXCLUDED.is_active;
 
 -- ============================================================================
 -- SIGNAL-SIGHTING ASSOCIATIONS
